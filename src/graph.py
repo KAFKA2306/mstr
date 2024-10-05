@@ -131,5 +131,70 @@ def main():
 
     print(f"MSTR Shares Outstanding: {mstr_shares}")
 
+
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import os
+from datetime import datetime
+import yfinance as yf
+import numpy as np
+
+# ... (前の関数は変更なし)
+
+def calculate_monthly_averages(df):
+    # Convert Date to datetime if it's not already
+    df['Date'] = pd.to_datetime(df['Date'])
+    
+    # Set Date as index
+    df = df.set_index('Date')
+    
+    # Calculate monthly averages
+    monthly_avg = df.resample('M').mean()
+    
+    # Reset index to make Date a column again
+    monthly_avg = monthly_avg.reset_index()
+    
+    return monthly_avg
+
+def main():
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    data_path = os.path.join(script_dir, '..', 'data', 'mstr_btc_data.csv')
+    output_dir = os.path.join(script_dir, '..', 'output')
+    
+    os.makedirs(output_dir, exist_ok=True)
+
+    df = load_mstr_btc_data(data_path)
+    mstr_shares = get_mstr_shares_outstanding()
+    df = calculate_mstr_btc_metrics(df, mstr_shares)
+
+    # Calculate and save monthly averages
+    monthly_avg_df = calculate_monthly_averages(df)
+    monthly_avg_output_path = os.path.join(output_dir, 'mstr_btc_metrics_monthly_avg.csv')
+    monthly_avg_df.to_csv(monthly_avg_output_path, index=False)
+    print(f"Monthly average data saved to {monthly_avg_output_path}")
+
+    btc_vs_market_cap_plot = plot_btc_holdings_vs_market_cap(df)
+    save_plot(btc_vs_market_cap_plot, os.path.join(output_dir, 'btc_holdings_vs_market_cap.png'))
+
+    btc_to_market_cap_ratio_plot = plot_btc_to_market_cap_ratio(df)
+    save_plot(btc_to_market_cap_ratio_plot, os.path.join(output_dir, 'btc_to_market_cap_ratio.png'))
+
+    btc_vs_market_cap_scatter_plot = plot_btc_holdings_vs_market_cap_scatter(df)
+    save_plot(btc_vs_market_cap_scatter_plot, os.path.join(output_dir, 'btc_holdings_vs_market_cap_scatter.png'))
+
+    financial_leverage_ratio_plot = plot_financial_leverage_ratio(df)
+    save_plot(financial_leverage_ratio_plot, os.path.join(output_dir, 'financial_leverage_ratio.png'))
+
+    btc_to_net_assets_ratio_plot = plot_btc_to_net_assets_ratio(df)
+    save_plot(btc_to_net_assets_ratio_plot, os.path.join(output_dir, 'btc_to_net_assets_ratio.png'))
+
+    # Save the processed daily data
+    output_data_path = os.path.join(output_dir, 'mstr_btc_metrics_daily.csv')
+    df.to_csv(output_data_path, index=False)
+    print(f"Processed daily data saved to {output_data_path}")
+
+    print(f"MSTR Shares Outstanding: {mstr_shares}")
+
 if __name__ == "__main__":
     main()
