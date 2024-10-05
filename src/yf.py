@@ -17,10 +17,32 @@ def load_btc_holdings(file_path):
     df['Date'] = pd.to_datetime(df['Date']).dt.tz_localize(None)  # Remove timezone info
     return df
 
+def fetch_financial_data(ticker, start_date, end_date):
+    stock = yf.Ticker(ticker)
+    quarterly_data = stock.quarterly_financials
+    balance_sheet = stock.quarterly_balance_sheet
+    
+    total_assets = balance_sheet.loc['Total Assets']
+    total_liabilities = balance_sheet.loc['Total Liabilities Net Minority Interest']
+    
+    financial_data = pd.DataFrame({
+        'Date': total_assets.index,
+        'Total_Assets': total_assets.values,
+        'Total_Liabilities': total_liabilities.values
+    })
+    
+    financial_data['Date'] = pd.to_datetime(financial_data['Date']).dt.tz_localize(None)
+    financial_data = financial_data.sort_values('Date')
+    
+    return financial_data
+
 def process_data(start_date, end_date, btc_holdings_path):
     # Fetch MSTR and BTC-USD data
     mstr_data = fetch_data("MSTR", start_date, end_date)
     btc_data = fetch_data("BTC-USD", start_date, end_date)
+    
+    # Fetch financial data
+    financial_data = fetch_financial_data("MSTR", start_date, end_date)
 
     # Merge MSTR and BTC-USD data
     merged_data = pd.merge(mstr_data, btc_data, on='Date', how='outer')
@@ -30,6 +52,9 @@ def process_data(start_date, end_date, btc_holdings_path):
 
     # Merge with BTC holdings data
     final_data = pd.merge(merged_data, btc_holdings, on='Date', how='outer')
+    
+    # Merge with financial data
+    final_data = pd.merge(final_data, financial_data, on='Date', how='outer')
 
     # Sort by date and forward fill missing values
     final_data = final_data.sort_values('Date').ffill()
