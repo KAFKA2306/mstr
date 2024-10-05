@@ -69,7 +69,7 @@ def save_to_csv(df, filename):
 def main():
     # Set date range (e.g., last 5 years)
     end_date = datetime.now().strftime('%Y-%m-%d')
-    start_date = '2020-08-10'
+    start_date = '2020-03-01'
     # Set file paths
     script_dir = os.path.dirname(os.path.abspath(__file__))
     btc_holdings_path = os.path.join(script_dir, '..', 'data', 'btcholdings.csv')
