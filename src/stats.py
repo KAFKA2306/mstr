@@ -100,7 +100,7 @@ def plot_rolling_correlation(returns, window=90, output_dir=None):
     plt.savefig(os.path.join(output_dir, 'rolling_correlation.png'))
     plt.close()
 
-def plot_rolling_sharpe_ratio(returns, risk_free_rate=0.02, window=90, output_dir=None):
+def plot_rolling_sharpe_ratio(returns, risk_free_rate=0.02, window=252, output_dir=None):
     excess_returns = returns - risk_free_rate / 252
     rolling_mean = excess_returns.rolling(window=window).mean()
     rolling_std = excess_returns.rolling(window=window).std()
