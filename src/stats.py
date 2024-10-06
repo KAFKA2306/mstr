@@ -48,7 +48,7 @@ def plot_cumulative_returns(returns, title, output_dir):
     plt.savefig(os.path.join(output_dir, 'cumulative_returns_log.png'))
     plt.close()
 
-def plot_rolling_beta(returns, market_returns, window=30, output_dir=None):
+def plot_rolling_beta(returns, market_returns, window=90, output_dir=None):
     rolling_covariance = returns.rolling(window=window).cov(market_returns)
     rolling_market_variance = market_returns.rolling(window=window).var()
     rolling_beta = rolling_covariance / rolling_market_variance
@@ -67,7 +67,7 @@ def plot_rolling_beta(returns, market_returns, window=30, output_dir=None):
     plt.savefig(os.path.join(output_dir, 'rolling_beta.png'))
     plt.close()
 
-def plot_rolling_volatility(returns, window=30, output_dir=None):
+def plot_rolling_volatility(returns, window=90, output_dir=None):
     rolling_vol = returns.rolling(window=window).std() * np.sqrt(252)
     plt.figure(figsize=(12, 6))
     for col in rolling_vol.columns:
@@ -82,7 +82,7 @@ def plot_rolling_volatility(returns, window=30, output_dir=None):
     plt.savefig(os.path.join(output_dir, 'rolling_volatility.png'))
     plt.close()
 
-def plot_rolling_correlation(returns, window=30, output_dir=None):
+def plot_rolling_correlation(returns, window=90, output_dir=None):
     plt.figure(figsize=(12, 6))
     for i in range(len(returns.columns)):
         for j in range(i+1, len(returns.columns)):
@@ -100,7 +100,7 @@ def plot_rolling_correlation(returns, window=30, output_dir=None):
     plt.savefig(os.path.join(output_dir, 'rolling_correlation.png'))
     plt.close()
 
-def plot_rolling_sharpe_ratio(returns, risk_free_rate=0.02, window=30, output_dir=None):
+def plot_rolling_sharpe_ratio(returns, risk_free_rate=0.02, window=90, output_dir=None):
     excess_returns = returns - risk_free_rate / 252
     rolling_mean = excess_returns.rolling(window=window).mean()
     rolling_std = excess_returns.rolling(window=window).std()
@@ -119,7 +119,7 @@ def plot_rolling_sharpe_ratio(returns, risk_free_rate=0.02, window=30, output_di
     plt.savefig(os.path.join(output_dir, 'rolling_sharpe_ratio.png'))
     plt.close()
 
-def plot_rolling_beta(returns, market_returns, window=30, output_dir=None):
+def plot_rolling_beta(returns, market_returns, window=90, output_dir=None):
     asset_cols = [col for col in returns.columns if col != 'SP500']
     rolling_betas = pd.DataFrame(index=returns.index)
     
