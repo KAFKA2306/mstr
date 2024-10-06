@@ -6,14 +6,24 @@
 
 ## プロジェクト構成
 
-1. `yf.py`: データ取得と前処理を行います。
-2. `graph.py`: データの分析と視覚化を行います。
+- `data/`: 入力データファイルを格納
+  - `btcholdings.csv`: MicroStrategyのビットコイン保有量データ
+  - `mstr_financial_data.csv`: MicroStrategyの財務データ
+- `src/`: ソースコードファイルを格納
+- `output/`: 生成されたデータとグラフを格納
+  - `plots/`: 生成されたグラフ画像
+  - `mstr_btc_metrics_daily.csv`: 日次の分析メトリクス
+  - `mstr_btc_metrics_monthly_avg.csv`: 月次平均の分析メトリクス
+
+主要なスクリプト：
+1. `src/yf.py`: データ取得と前処理を行います。
+2. `src/graph.py`: データの分析と視覚化を行います。
 
 ## データ分析と観察結果
 
 ### 1. ビットコイン保有価値 vs 市場資本金
 
-![Bitcoin Holdings Value vs Market Capitalization](output/plots/scatter_plot.png)
+![Bitcoin Holdings Value vs Market Capitalization](output/plots/bitcoin_holdings_vs_market_cap_scatter.png)
 
 #### 観察結果:
 - 2020年から2024年にかけて、ビットコイン保有価値と市場資本金の増加傾向が見られます。
@@ -26,7 +36,7 @@
 
 ### 2. 時系列分析：市場資本金、ビットコイン保有価値、総負債
 
-![Market Cap, BTC Value, and Total Liabilities](output/plots/total_values_plot.png)
+![Market Cap, BTC Value, and Total Liabilities](output/plots/market_cap_bitcoin_value_total_liabilities.png)
 
 #### 観察結果:
 - 市場資本金とビットコイン保有価値は類似した変動パターンを示しています。
@@ -37,7 +47,7 @@
 
 ### 3. グロス利益を含む総合分析
 
-![Market Cap, BTC Value, Liabilities, and Gross Profit](output/plots/total_values_plot_with_gross_profit.png)
+![Market Cap, BTC Value, Liabilities, and Gross Profit](output/plots/market_cap_bitcoin_value_total_liabilities_gross_profit.png)
 
 #### 観察結果:
 - グロス利益は他の指標と比較して変動が小さく、ほぼ横ばいです。
@@ -45,7 +55,7 @@
 
 ### 4. 市場資本金 vs 総負債
 
-![Market Capitalization vs Total Liabilities](output/plots/market_cap_vs_liabilities_scatter.png)
+![Market Capitalization vs Total Liabilities](output/plots/market_cap_vs_total_liabilities_scatter.png)
 
 #### 観察結果:
 - 分析期間を通じて、市場資本金は総負債を上回っています。
@@ -75,15 +85,17 @@
 
 ## ツールの使用方法
 
-1. `yf.py` を実行してデータを取得・前処理します。
-2. `graph.py` を実行してグラフを生成します。
+1. `src/yf.py` を実行してデータを取得・前処理します。
+2. `src/graph.py` を実行してグラフを生成します。
 
 生成されたグラフと処理済みデータは 'output' ディレクトリに保存されます:
 
-- scatter_plot.png: ビットコイン保有価値 vs 市場資本金の散布図
-- total_values_plot.png: 市場資本金、ビットコイン保有価値、総負債の時系列プロット
-- total_values_plot_with_gross_profit.png: 上記に加えてグロス利益を含む時系列プロット
-- market_cap_vs_liabilities_scatter.png: 市場資本金 vs 総負債の散布図
+- `plots/bitcoin_holdings_vs_market_cap_scatter.png`: ビットコイン保有価値 vs 市場資本金の散布図
+- `plots/market_cap_bitcoin_value_total_liabilities.png`: 市場資本金、ビットコイン保有価値、総負債の時系列プロット
+- `plots/market_cap_bitcoin_value_total_liabilities_gross_profit.png`: 上記に加えてグロス利益を含む時系列プロット
+- `plots/market_cap_vs_total_liabilities_scatter.png`: 市場資本金 vs 総負債の散布図
+- `mstr_btc_metrics_daily.csv`: 日次の分析メトリクス
+- `mstr_btc_metrics_monthly_avg.csv`: 月次平均の分析メトリクス
 
 ## 注意事項
 
