@@ -13,7 +13,7 @@
 
 ### 1. ビットコイン保有価値 vs 市場資本金
 
-![Bitcoin Holdings Value vs Market Capitalization](output/scatter_plot.png)
+![Bitcoin Holdings Value vs Market Capitalization](output/plots/scatter_plot.png)
 
 #### 観察結果:
 - 2020年から2024年にかけて、ビットコイン保有価値と市場資本金の増加傾向が見られます。
@@ -26,7 +26,7 @@
 
 ### 2. 時系列分析：市場資本金、ビットコイン保有価値、総負債
 
-![Market Cap, BTC Value, and Total Liabilities](output/total_values_plot.png)
+![Market Cap, BTC Value, and Total Liabilities](output/plots/total_values_plot.png)
 
 #### 観察結果:
 - 市場資本金とビットコイン保有価値は類似した変動パターンを示しています。
@@ -37,7 +37,7 @@
 
 ### 3. グロス利益を含む総合分析
 
-![Market Cap, BTC Value, Liabilities, and Gross Profit](output/total_values_plot_with_gross_profit.png)
+![Market Cap, BTC Value, Liabilities, and Gross Profit](output/plots/total_values_plot_with_gross_profit.png)
 
 #### 観察結果:
 - グロス利益は他の指標と比較して変動が小さく、ほぼ横ばいです。
@@ -45,7 +45,7 @@
 
 ### 4. 市場資本金 vs 総負債
 
-![Market Capitalization vs Total Liabilities](output/market_cap_vs_liabilities_scatter.png)
+![Market Capitalization vs Total Liabilities](output/plots/market_cap_vs_liabilities_scatter.png)
 
 #### 観察結果:
 - 分析期間を通じて、市場資本金は総負債を上回っています。
