@@ -47,11 +47,13 @@ def get_mstr_shares_outstanding():
 def process_data(start_date, end_date, btc_holdings_path, financial_data_path):
     mstr_data = fetch_stock_data("MSTR", start_date, end_date)
     btc_data = fetch_stock_data("BTC-USD", start_date, end_date)
+    sp500_data = fetch_stock_data("^GSPC", start_date, end_date)  # S&P 500 data
     assets_data = fetch_financial_data("MSTR", start_date, end_date)
     btc_holdings = load_btc_holdings(btc_holdings_path, start_date)
     financial_data = load_financial_data(financial_data_path, start_date)
 
     merged_data = pd.merge(mstr_data, btc_data, on='Date', how='outer')
+    merged_data = pd.merge(merged_data, sp500_data, on='Date', how='outer')  # Merge S&P 500 data
     merged_data = pd.merge(merged_data, btc_holdings, on='Date', how='outer')
     merged_data = pd.merge(merged_data, assets_data, on='Date', how='outer')
     final_data = pd.merge(merged_data, financial_data, on='Date', how='outer')
@@ -72,22 +74,19 @@ def format_number(x, is_ratio=False):
     if is_ratio:
         return float(f'{x:.4g}')
     else:
-        return int(x)  # 小数点以下を切り捨てて整数に変換
+        return int(x)
 
 def calculate_metrics(df, mstr_shares):
-    # Calculate new columns
     df['MSTR_Market_Cap_USD'] = df['MSTR_Close'] * mstr_shares
     df['BTC_Holdings_Value_USD'] = df['Total_BTC'] * df['BTC-USD_Close']
     df['BTC_to_Market_Cap_Ratio'] = df['BTC_Holdings_Value_USD'] / df['MSTR_Market_Cap_USD']
     df['Financial_Leverage_Ratio'] = df['Total_Liabilities'] / df['Total_Assets']
     df['Net_Assets_USD'] = df['Total_Assets'] - df['Total_Liabilities']
     df['BTC_to_Net_Assets_Ratio'] = df['BTC_Holdings_Value_USD'] / df['Net_Assets_USD']
-    df['Gross_Profit_Margin'] = df['Gross_Profit'] / df['MSTR_Market_Cap_USD']  # 新しい指標を追加
+    df['Gross_Profit_Margin'] = df['Gross_Profit'] / df['MSTR_Market_Cap_USD']
 
-    # Identify ratio columns
     ratio_columns = ['BTC_to_Market_Cap_Ratio', 'Financial_Leverage_Ratio', 'BTC_to_Net_Assets_Ratio', 'Gross_Profit_Margin']
 
-    # Apply formatting to all numeric columns
     for col in df.select_dtypes(include=[np.number]).columns:
         if col in ratio_columns:
             df[col] = df[col].apply(lambda x: format_number(x, is_ratio=True))
@@ -104,7 +103,6 @@ def calculate_monthly_averages(df):
     monthly_avg = df.resample('ME').mean()
     monthly_avg = monthly_avg.reset_index()
     
-    # Re-apply formatting to monthly averages
     ratio_columns = ['BTC_to_Market_Cap_Ratio', 'Financial_Leverage_Ratio', 'BTC_to_Net_Assets_Ratio', 'Gross_Profit_Margin']
     for col in monthly_avg.select_dtypes(include=[np.number]).columns:
         if col in ratio_columns:
@@ -140,6 +138,11 @@ def main():
         monthly_avg_df = calculate_monthly_averages(df)
         monthly_avg_output_path = os.path.join(output_dir, 'mstr_btc_metrics_monthly_avg.csv')
         save_to_csv(monthly_avg_df, monthly_avg_output_path)
+
+        # Save S&P 500 data separately
+        sp500_data = df[['Date', '^GSPC_Close']].rename(columns={'^GSPC_Close': 'Close'})
+        sp500_output_path = os.path.join(output_dir, 'sp500_data.csv')
+        save_to_csv(sp500_data, sp500_output_path)
 
         print(f"MSTR Shares Outstanding: {mstr_shares}")
     except Exception as e:
