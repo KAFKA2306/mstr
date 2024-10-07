@@ -77,17 +77,7 @@
 
 
 
-### 4. Net Value to BTC Ratio & BTC Holdings YoY Change
-
-![Net Value to BTC Ratio & BTC Holdings YoY Change](output/plots/mstr_btc_metrics_dual_axis.png)
-
-#### 観察結果:
-- Net Value to BTC Ratioは2021年前半に最高値（約2.0）を記録した後、変動しながら低下傾向にあります。
-- BTC Holdings YoY Changeは2022年初頭に急激な上昇を見せ、その後段階的に増加しています。
-- 2023年後半から2024年にかけて、Net Value to BTC Ratioが再び上昇傾向を示しています。
-- BTC Holdings YoY Changeは2024年に入って急激な上昇を見せており、積極的な購入戦略が継続していることが伺えます。
-
-### 5. Total Bitcoin Holdings Over Time
+### 4. Total Bitcoin Holdings Over Time
 
 ![Total Bitcoin Holdings Over Time](output/plots/total_btc_holdings.png)
 
@@ -96,6 +86,16 @@
 - 2021年1月頃に大きな増加が見られ、その後も段階的に増加を続けています。
 - 2023年後半から2024年にかけて、保有量の増加ペースが加速しています。
 - 2024年10月時点で、保有量は約250,000 BTCに達しています。
+
+### 5. Net Value to BTC Ratio & BTC Holdings YoY Change
+
+![Net Value to BTC Ratio & BTC Holdings YoY Change](output/plots/mstr_btc_metrics_dual_axis.png)
+
+#### 観察結果:
+- Net Value to BTC Ratioは2021年前半に最高値（約2.0）を記録した後、変動しながら低下傾向にあります。
+- BTC Holdings YoY Changeは2022年初頭に急激な上昇を見せ、その後段階的に増加しています。
+- 2023年後半から2024年にかけて、Net Value to BTC Ratioが再び上昇傾向を示しています。
+- BTC Holdings YoY Changeは2024年に入って急激な上昇を見せており、積極的な購入戦略が継続していることが伺えます。
 
 
 
