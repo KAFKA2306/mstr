@@ -31,7 +31,7 @@ def main() -> None:
     records = data["records"]
     assert records, "records must not be empty"
     ids: set[str] = set()
-    order_keys: list[tuple[date, str]] = []
+    order_keys: list[tuple[date, date, str]] = []
 
     for record in records:
         record_id = record["record_id"]
@@ -40,10 +40,11 @@ def main() -> None:
 
         reported = parse_iso_date(record["reported_date"], "reported_date")
         as_of_raw = record.get("as_of_date")
+        as_of = reported
         if as_of_raw:
             as_of = parse_iso_date(as_of_raw, "as_of_date")
             assert as_of <= reported, f"as_of_date after reported_date: {record_id}"
-        order_keys.append((reported, record_id))
+        order_keys.append((reported, as_of, record_id))
 
         event_type = record["event_type"]
         btc_delta = record["btc_delta"]
@@ -63,7 +64,7 @@ def main() -> None:
         assert parsed.scheme == "https", f"non-HTTPS source: {record_id}"
         assert parsed.netloc in ALLOWED_HOSTS, f"non-primary host: {record_id}"
 
-    assert order_keys == sorted(order_keys), "records must be ordered by reported_date then record_id"
+    assert order_keys == sorted(order_keys), "records must be ordered by report date and disclosed as-of state"
 
     latest = latest_verified_state(data)
     declared = data["latest_verified"]
