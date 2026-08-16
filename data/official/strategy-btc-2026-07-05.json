@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "issuer": "Strategy Inc",
+  "cik": "0001050446",
+  "filing": {
+    "form": "8-K",
+    "filed_at": "2026-07-06",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000119312526295586/mstr-20260706.htm"
+  },
+  "holding_snapshots": [
+    {
+      "effective_at": "2026-06-30T16:00:00-04:00",
+      "btc_holdings": 846000,
+      "aggregate_purchase_price_usd": 63940000000,
+      "average_purchase_price_usd_per_btc": 75578
+    },
+    {
+      "effective_at": "2026-07-05T16:00:00-04:00",
+      "btc_holdings": 843775,
+      "aggregate_purchase_price_usd": 63690000000,
+      "average_purchase_price_usd_per_btc": 75476,
+      "usd_reserve_usd": 2550000000
+    }
+  ],
+  "bitcoin_transactions": [
+    {
+      "period_start": "2026-06-29",
+      "period_end": "2026-06-30",
+      "type": "sale",
+      "btc_quantity": 1363,
+      "aggregate_sale_price_usd": 80800000,
+      "average_sale_price_usd_per_btc": 59256
+    },
+    {
+      "period_start": "2026-07-01",
+      "period_end": "2026-07-05",
+      "type": "sale",
+      "btc_quantity": 2225,
+      "aggregate_sale_price_usd": 135200000,
+      "average_sale_price_usd_per_btc": 60773
+    }
+  ],
+  "notes": [
+    "The filing states that sale proceeds were used to fund preferred-stock distributions and replenish the USD reserve.",
+    "Purchase prices include fees and expenses; sale prices are net of fees and expenses."
+  ]
+}
