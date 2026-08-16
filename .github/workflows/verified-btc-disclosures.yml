@@ -1,0 +1,36 @@
+name: Verified Strategy BTC disclosures
+
+on:
+  pull_request:
+    paths:
+      - data/verified_btc_disclosures_2026.json
+      - src/current_btc_state.py
+      - scripts/verify_btc_disclosures.py
+      - .github/workflows/verified-btc-disclosures.yml
+  push:
+    branches: [main]
+    paths:
+      - data/verified_btc_disclosures_2026.json
+      - src/current_btc_state.py
+      - scripts/verify_btc_disclosures.py
+      - .github/workflows/verified-btc-disclosures.yml
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compile current-use disclosure code
+        run: python -m compileall src/current_btc_state.py scripts/verify_btc_disclosures.py
+      - name: Validate primary-source disclosure ledger
+        run: python scripts/verify_btc_disclosures.py
+      - name: Read latest verified state through canonical entrypoint
+        run: python src/current_btc_state.py
+      - name: Verify clean checkout
+        run: git diff --exit-code
