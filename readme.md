@@ -1,5 +1,7 @@
 # MSTR・Bitcoin分析snapshot
 
+[![Verified Strategy BTC disclosures](https://github.com/KAFKA2306/mstr/actions/workflows/verified-btc-disclosures.yml/badge.svg)](https://github.com/KAFKA2306/mstr/actions/workflows/verified-btc-disclosures.yml)
+
 > **状態: 2020年から2024年を中心に作成された過去の探索的分析です。現在の保有量・株価・財務状態を示すものではありません。**
 
 このリポジトリは、MSTR株価、Bitcoin価格、Bitcoin保有量、財務データを結合し、時価総額とBitcoin保有価値の関係やrolling指標を可視化した研究snapshotです。継続更新中の企業データベース、現在値dashboard、投資判断systemではありません。
@@ -48,7 +50,7 @@ yfinanceのquarterly balance sheet
 
 - `data/*.csv`の全行に一次source、取得日時、document ID、単位、訂正版identityが付与されているわけではありません
 - `requirements.txt`を確認できず、依存versionは固定されていません
-- CI、自動test、再生成hash、data freshness監査を確認できません
+- 旧来の探索分析全体には、再現可能な自動test・再生成hash・data freshness監査が未整備です。現在は`Verified Strategy BTC disclosures` workflowが`data/verified_btc_disclosures_2026.json`と`src/current_btc_state.py`の一次開示ledgerを限定的に検証します
 - yfinanceの応答・schema・補正方法は将来変わる可能性があります
 
 ## 現在できること
