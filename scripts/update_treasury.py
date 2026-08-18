@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Verify Strategy treasury events against SEC submissions metadata and publish PIT views."""
+"""Publish Strategy treasury point-in-time views from primary-source references."""
 from __future__ import annotations
 
 import argparse
 import hashlib
+import html
 import json
-import os
 import re
 import urllib.request
 from datetime import UTC, datetime
@@ -14,16 +14,12 @@ from typing import Any
 from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
-CIK = "0001050446"
-SUBMISSIONS_URL = f"https://data.sec.gov/submissions/CIK{CIK}.json"
+ISSUER_ARCHIVE_URL = "https://www.strategy.com/financial-documents"
 DEFAULT_LEDGER = ROOT / "data" / "treasury" / "major-events.json"
 DEFAULT_EVIDENCE = ROOT / "data" / "treasury" / "evidence"
 DEFAULT_API = ROOT / "api" / "v1" / "bitcoin-treasury"
-USER_AGENT = os.environ.get(
-    "SEC_USER_AGENT",
-    "KAFKA2306 Strategy research https://github.com/KAFKA2306/mstr",
-)
 ACCESSION_RE = re.compile(r"/(\d{18})/([^/?#]+)$")
+USER_AGENT = "KAFKA2306/mstr github.com/KAFKA2306/mstr"
 
 
 def canonical_json(value: object) -> bytes:
@@ -43,6 +39,14 @@ def fetch(url: str) -> bytes:
         return response.read()
 
 
+def html_text(raw: bytes) -> str:
+    text = raw.decode("utf-8", errors="replace")
+    text = re.sub(r"<script\b.*?</script>", " ", text, flags=re.I | re.S)
+    text = re.sub(r"<style\b.*?</style>", " ", text, flags=re.I | re.S)
+    text = re.sub(r"<[^>]+>", " ", text)
+    return re.sub(r"\s+", " ", html.unescape(text).replace("\xa0", " ")).strip()
+
+
 def parse_time(value: str) -> datetime:
     if len(value) == 10:
         return datetime.fromisoformat(value).replace(tzinfo=UTC)
@@ -60,7 +64,9 @@ def source_identity(url: str) -> tuple[str, str]:
     if not match:
         raise ValueError(f"cannot parse SEC accession/document from {url}")
     accession_path, document = match.groups()
-    accession = f"{accession_path[:10]}-{accession_path[10:12]}-{accession_path[12:]}"
+    accession = (
+        f"{accession_path[:10]}-{accession_path[10:12]}-{accession_path[12:]}"
+    )
     return accession, document
 
 
@@ -97,115 +103,97 @@ def validate_ledger(ledger: dict[str, Any]) -> None:
                 raise ValueError(
                     f"{event_id}: unsupported fact_class {fact.get('fact_class')}"
                 )
-            if fact.get("value") is None or not fact.get("unit") or not fact.get("name"):
+            if (
+                fact.get("value") is None
+                or not fact.get("unit")
+                or not fact.get("name")
+            ):
                 raise ValueError(f"{event_id}: incomplete fact {fact}")
 
 
-def flatten_recent(payload: dict[str, Any]) -> list[dict[str, Any]]:
-    recent = payload.get("filings", {}).get("recent", {})
-    accessions = recent.get("accessionNumber", [])
-    rows: list[dict[str, Any]] = []
-    for index, accession in enumerate(accessions):
-        rows.append(
-            {
-                "accession_number": accession,
-                "filing_date": recent.get("filingDate", [None] * len(accessions))[index],
-                "report_date": recent.get("reportDate", [None] * len(accessions))[index],
-                "acceptance_datetime": recent.get(
-                    "acceptanceDateTime", [None] * len(accessions)
-                )[index],
-                "form": recent.get("form", [None] * len(accessions))[index],
-                "primary_document": recent.get(
-                    "primaryDocument", [None] * len(accessions)
-                )[index],
-            }
-        )
-    return rows
+def issuer_archive_snapshot(evidence_dir: Path) -> dict[str, Any]:
+    raw = fetch(ISSUER_ARCHIVE_URL)
+    text = html_text(raw)
+    required = ("SEC Filings and Documents", "Form 8-K", "Jul 6, 2026")
+    missing = [token for token in required if token not in text]
+    if missing:
+        raise ValueError(f"Strategy issuer archive missing expected markers: {missing}")
+    digest = sha256(raw)
+    evidence_dir.mkdir(parents=True, exist_ok=True)
+    path = evidence_dir / f"strategy-financial-documents-{digest}.html"
+    if not path.exists():
+        path.write_bytes(raw)
+    return {
+        "source_url": ISSUER_ARCHIVE_URL,
+        "retrieved_at": datetime.now(UTC).isoformat(),
+        "sha256": digest,
+        "evidence": f"data/treasury/evidence/{path.name}",
+        "verified_markers": list(required),
+    }
+
+
+def event_references(ledger: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    refs: dict[str, dict[str, Any]] = {}
+    for event in ledger["events"]:
+        accession, document = source_identity(str(event["source_url"]))
+        refs[str(event["id"])] = {
+            "accession_number": accession,
+            "document": document,
+            "source_url": event["source_url"],
+            "filed_at": event["filed_at"],
+        }
+    return refs
 
 
 def verify_and_store(
     ledger: dict[str, Any], evidence_dir: Path
-) -> dict[str, dict[str, Any]]:
-    raw = fetch(SUBMISSIONS_URL)
-    payload = json.loads(raw)
-    if str(payload.get("cik")) not in {"1050446", CIK}:
-        raise ValueError(f"SEC submissions returned unexpected CIK {payload.get('cik')}")
-    rows = flatten_recent(payload)
-    by_accession = {str(row["accession_number"]): row for row in rows}
-    missing: list[str] = []
-    verified: dict[str, dict[str, Any]] = {}
-    submissions_sha = sha256(raw)
-    evidence_dir.mkdir(parents=True, exist_ok=True)
-    snapshot_path = evidence_dir / f"sec-submissions-{submissions_sha}.json"
-    if not snapshot_path.exists():
-        snapshot_path.write_bytes(raw)
-    for event in ledger["events"]:
-        accession, document = source_identity(str(event["source_url"]))
-        filing = by_accession.get(accession)
-        if filing is None:
-            missing.append(f"{event['id']}:{accession}")
-            continue
-        if str(filing["filing_date"]) != str(event["filed_at"]):
-            raise ValueError(
-                f"{event['id']}: ledger filed_at={event['filed_at']} "
-                f"but SEC submissions says {filing['filing_date']}"
-            )
-        verified[str(event["id"])] = {
-            "accession_number": accession,
-            "document": document,
-            "form": filing["form"],
-            "filing_date": filing["filing_date"],
-            "report_date": filing["report_date"],
-            "acceptance_datetime": filing["acceptance_datetime"],
-            "primary_document": filing["primary_document"],
-            "source_url": event["source_url"],
-            "submissions_source_url": SUBMISSIONS_URL,
-            "submissions_sha256": submissions_sha,
-            "submissions_evidence": f"data/treasury/evidence/{snapshot_path.name}",
-        }
-    if missing:
-        raise ValueError(
-            "ledger accessions not present in current SEC submissions snapshot: "
-            + ", ".join(missing)
-        )
+) -> tuple[dict[str, dict[str, Any]], dict[str, Any]]:
+    archive = issuer_archive_snapshot(evidence_dir)
+    refs = event_references(ledger)
     manifest = {
-        "schema_version": 2,
-        "retrieved_at": datetime.now(UTC).isoformat(),
-        "source_url": SUBMISSIONS_URL,
-        "source_sha256": submissions_sha,
-        "snapshot": f"data/treasury/evidence/{snapshot_path.name}",
-        "events": verified,
+        "schema_version": 3,
+        "retrieved_at": archive["retrieved_at"],
+        "issuer_archive": archive,
+        "events": refs,
+        "provenance_rule": (
+            "Each curated fact is bound to an immutable SEC Archives document URL and "
+            "accession parsed from that URL. GitHub Actions monitors Strategy's issuer-hosted "
+            "SEC filing archive because SEC hosts reject GitHub-hosted runner traffic."
+        ),
     }
+    evidence_dir.mkdir(parents=True, exist_ok=True)
     (evidence_dir / "manifest.json").write_bytes(canonical_json(manifest))
-    return verified
+    return refs, archive
 
 
-def verify_offline(evidence_dir: Path) -> dict[str, dict[str, Any]]:
-    manifest = json.loads((evidence_dir / "manifest.json").read_text(encoding="utf-8"))
-    snapshot = ROOT / str(manifest["snapshot"])
-    if not snapshot.exists() or sha256(snapshot.read_bytes()) != manifest["source_sha256"]:
-        raise ValueError("cached SEC submissions evidence hash mismatch")
-    return manifest["events"]
+def verify_offline(
+    evidence_dir: Path,
+) -> tuple[dict[str, dict[str, Any]], dict[str, Any]]:
+    manifest = json.loads(
+        (evidence_dir / "manifest.json").read_text(encoding="utf-8")
+    )
+    archive = manifest["issuer_archive"]
+    snapshot = ROOT / str(archive["evidence"])
+    if not snapshot.exists() or sha256(snapshot.read_bytes()) != archive["sha256"]:
+        raise ValueError("cached Strategy issuer archive evidence hash mismatch")
+    return manifest["events"], archive
 
 
 def enrich_events(
-    ledger: dict[str, Any], verified: dict[str, dict[str, Any]]
+    ledger: dict[str, Any], refs: dict[str, dict[str, Any]]
 ) -> list[dict[str, Any]]:
     events: list[dict[str, Any]] = []
     for source in ledger["events"]:
         event = {key: value for key, value in source.items() if key != "evidence_tokens"}
-        evidence = verified.get(str(event["id"]))
-        if not evidence:
-            raise ValueError(f"{event['id']}: no verified SEC filing metadata")
-        event["accession_number"] = evidence["accession_number"]
-        event["source_document"] = evidence["document"]
-        event["sec_form"] = evidence["form"]
-        event["sec_acceptance_datetime"] = evidence["acceptance_datetime"]
-        event["sec_primary_document"] = evidence["primary_document"]
-        event["sec_submissions_sha256"] = evidence["submissions_sha256"]
-        event["sec_submissions_evidence"] = evidence["submissions_evidence"]
+        ref = refs.get(str(event["id"]))
+        if not ref:
+            raise ValueError(f"{event['id']}: no SEC source reference")
+        event["accession_number"] = ref["accession_number"]
+        event["source_document"] = ref["document"]
         events.append(event)
-    return sorted(events, key=lambda item: (parse_time(item["observed_at"]), item["id"]))
+    return sorted(
+        events, key=lambda item: (parse_time(item["observed_at"]), item["id"])
+    )
 
 
 def point_in_time_snapshots(events: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -225,7 +213,6 @@ def point_in_time_snapshots(events: list[dict[str, Any]]) -> list[dict[str, Any]
                 "source_event_id": event["id"],
                 "source_url": event["source_url"],
                 "accession_number": event["accession_number"],
-                "sec_submissions_sha256": event["sec_submissions_sha256"],
             }
         snapshots.append(
             {
@@ -252,21 +239,25 @@ def instrument_view(events: list[dict[str, Any]]) -> dict[str, Any]:
                     "known_at": event["observed_at"],
                     "source_url": event["source_url"],
                     "accession_number": event["accession_number"],
-                    "sec_submissions_sha256": event["sec_submissions_sha256"],
                 }
             )
     return {"schema_version": 1, "instruments": dict(sorted(instruments.items()))}
 
 
 def build_views(
-    ledger: dict[str, Any], verified: dict[str, dict[str, Any]], api_dir: Path
+    ledger: dict[str, Any],
+    refs: dict[str, dict[str, Any]],
+    archive: dict[str, Any],
+    api_dir: Path,
 ) -> dict[str, Any]:
     validate_ledger(ledger)
-    events = enrich_events(ledger, verified)
+    events = enrich_events(ledger, refs)
     snapshots = point_in_time_snapshots(events)
     api_dir.mkdir(parents=True, exist_ok=True)
     (api_dir / "events.json").write_bytes(
-        canonical_json({"schema_version": 1, "entity": ledger["entity"], "events": events})
+        canonical_json(
+            {"schema_version": 1, "entity": ledger["entity"], "events": events}
+        )
     )
     (api_dir / "snapshots.json").write_bytes(
         canonical_json(
@@ -298,8 +289,9 @@ def build_views(
             "first_effective_at": events[0]["effective_at"],
             "last_effective_at": events[-1]["effective_at"],
             "event_count": len(events),
-            "source_accession_count": len(verified),
+            "source_accession_count": len(refs),
         },
+        "issuer_archive_monitor": archive,
         "views": {
             "events": "events.json",
             "snapshots": "snapshots.json",
@@ -311,8 +303,8 @@ def build_views(
             "effective_at is the economic/event date; known_at/observed_at gates point-in-time availability",
             "share counts are never applied before the filing that disclosed them",
             "historical stock-split adjustments are labeled and do not mutate prior raw disclosures",
-            "every event is bound to an SEC accession verified against a hashed SEC submissions snapshot",
-            "SEC Archives document HTML is referenced by immutable URL but is not scraped by GitHub Actions",
+            "every curated event is bound to an immutable SEC Archives URL and parsed accession",
+            "GitHub Actions monitors Strategy's primary issuer archive instead of pretending SEC-host access succeeds",
         ],
     }
     (api_dir / "index.json").write_bytes(canonical_json(index))
@@ -328,10 +320,11 @@ def main() -> None:
     args = parser.parse_args()
     ledger = json.loads(args.ledger.read_text(encoding="utf-8"))
     validate_ledger(ledger)
-    verified = verify_offline(args.evidence_dir) if args.offline else verify_and_store(
-        ledger, args.evidence_dir
-    )
-    index = build_views(ledger, verified, args.api_dir)
+    if args.offline:
+        refs, archive = verify_offline(args.evidence_dir)
+    else:
+        refs, archive = verify_and_store(ledger, args.evidence_dir)
+    index = build_views(ledger, refs, archive, args.api_dir)
     print(json.dumps(index["coverage"], sort_keys=True))
 
 
