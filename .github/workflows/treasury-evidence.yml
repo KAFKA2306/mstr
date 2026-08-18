@@ -37,7 +37,7 @@ jobs:
         run: |
           python -m py_compile scripts/update_treasury.py tests/test_treasury_point_in_time.py
           python -m unittest -v tests.test_treasury_point_in_time
-      - name: Verify live SEC documents and build views
+      - name: Verify SEC submissions metadata and build views
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             python scripts/update_treasury.py \
@@ -52,25 +52,27 @@ jobs:
           import json
           from pathlib import Path
 
-          root = (
-              Path('build/api/v1/bitcoin-treasury')
-              if '${{ github.event_name }}' == 'pull_request'
-              else Path('api/v1/bitcoin-treasury')
-          )
+          root = Path('build/api/v1/bitcoin-treasury') if '${{ github.event_name }}' == 'pull_request' else Path('api/v1/bitcoin-treasury')
+          evidence = Path('build/data/treasury/evidence') if '${{ github.event_name }}' == 'pull_request' else Path('data/treasury/evidence')
           index = json.loads((root/'index.json').read_text())
           events = json.loads((root/'events.json').read_text())['events']
           snapshots = json.loads((root/'snapshots.json').read_text())['snapshots']
           latest = json.loads((root/'latest.json').read_text())
           instruments = json.loads((root/'instruments.json').read_text())['instruments']
+          manifest = json.loads((evidence/'manifest.json').read_text())
 
           assert index['coverage']['event_count'] >= 10
+          assert index['coverage']['source_accession_count'] == len(events)
           assert index['coverage']['first_effective_at'] <= '2024-03-18'
           assert index['coverage']['last_effective_at'] >= '2026-07-05'
           assert len(events) == len(snapshots)
-          assert all(event['source_url'].startswith('https://www.sec.gov/') for event in events)
-          assert all(len(event['source_sha256']) == 64 for event in events)
+          assert all(event['source_url'].startswith('https://www.sec.gov/Archives/') for event in events)
+          assert all(event['accession_number'] for event in events)
+          assert all(len(event['sec_submissions_sha256']) == 64 for event in events)
+          assert manifest['source_url'] == 'https://data.sec.gov/submissions/CIK0001050446.json'
+          assert len(manifest['source_sha256']) == 64
           assert '2029 Convertible Notes' in instruments
-          assert 'STRK' in instruments and 'STRF' in instruments and 'STRD' in instruments and 'STRC' in instruments
+          assert {'STRK', 'STRF', 'STRD', 'STRC'} <= set(instruments)
           assert latest['state']['bitcoin_holdings']['value'] == 843775
           assert latest['state']['usd_reserve']['value'] == 2550000000
           assert latest['state']['basic_shares_outstanding']['known_at'] == '2024-09-20T00:00:00Z'
