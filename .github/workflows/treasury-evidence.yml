@@ -1,0 +1,97 @@
+name: Treasury evidence
+
+on:
+  pull_request:
+    paths:
+      - data/treasury/**
+      - scripts/update_treasury.py
+      - tests/test_treasury_point_in_time.py
+      - .github/workflows/treasury-evidence.yml
+  push:
+    branches: [main]
+    paths:
+      - data/treasury/major-events.json
+      - scripts/update_treasury.py
+      - .github/workflows/treasury-evidence.yml
+  schedule:
+    - cron: '37 13 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: treasury-evidence-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Compile and unit test
+        run: |
+          python -m py_compile scripts/update_treasury.py tests/test_treasury_point_in_time.py
+          python -m unittest -v tests.test_treasury_point_in_time
+      - name: Verify live SEC documents and build views
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            python scripts/update_treasury.py \
+              --evidence-dir build/data/treasury/evidence \
+              --api-dir build/api/v1/bitcoin-treasury
+          else
+            python scripts/update_treasury.py
+          fi
+      - name: Audit point-in-time outputs
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          root = (
+              Path('build/api/v1/bitcoin-treasury')
+              if '${{ github.event_name }}' == 'pull_request'
+              else Path('api/v1/bitcoin-treasury')
+          )
+          index = json.loads((root/'index.json').read_text())
+          events = json.loads((root/'events.json').read_text())['events']
+          snapshots = json.loads((root/'snapshots.json').read_text())['snapshots']
+          latest = json.loads((root/'latest.json').read_text())
+          instruments = json.loads((root/'instruments.json').read_text())['instruments']
+
+          assert index['coverage']['event_count'] >= 10
+          assert index['coverage']['first_effective_at'] <= '2024-03-18'
+          assert index['coverage']['last_effective_at'] >= '2026-07-05'
+          assert len(events) == len(snapshots)
+          assert all(event['source_url'].startswith('https://www.sec.gov/') for event in events)
+          assert all(len(event['source_sha256']) == 64 for event in events)
+          assert '2029 Convertible Notes' in instruments
+          assert 'STRK' in instruments and 'STRF' in instruments and 'STRD' in instruments and 'STRC' in instruments
+          assert latest['state']['bitcoin_holdings']['value'] == 843775
+          assert latest['state']['usd_reserve']['value'] == 2550000000
+          assert latest['state']['basic_shares_outstanding']['known_at'] == '2024-09-20T00:00:00Z'
+          assert latest['state']['bitcoin_holdings']['known_at'] == '2026-07-06T00:00:00Z'
+          PY
+      - name: Upload pull-request evidence
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v7
+        with:
+          name: bitcoin-treasury-sec-evidence
+          path: build
+          retention-days: 30
+      - name: Commit changed SEC evidence and views
+        if: github.event_name != 'pull_request'
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add data/treasury/evidence api/v1/bitcoin-treasury
+          if git diff --cached --quiet; then
+            echo 'No treasury evidence change.'
+            exit 0
+          fi
+          git commit -m 'data: update Strategy treasury evidence'
+          git push
