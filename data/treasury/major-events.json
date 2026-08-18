@@ -1,0 +1,170 @@
+{
+  "schema_version": 1,
+  "entity": {
+    "name": "Strategy Inc",
+    "cik": "0001050446"
+  },
+  "events": [
+    {
+      "id": "2024-03-18-convertible-2031",
+      "event_type": "debt_issuance",
+      "effective_at": "2024-03-18",
+      "filed_at": "2024-03-18",
+      "observed_at": "2024-03-18T00:00:00Z",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000119312524070793/d792323dex41.htm",
+      "source_document": "SEC Exhibit 4.1 - 0.875% Convertible Senior Notes due 2031 indenture",
+      "facts": [
+        {"name": "principal_usd", "value": 603750000, "unit": "USD", "fact_class": "event"},
+        {"name": "coupon_rate", "value": 0.00875, "unit": "ratio_per_year", "fact_class": "instrument_term"},
+        {"name": "maturity_date", "value": "2031-03-15", "unit": "date", "fact_class": "instrument_term"}
+      ],
+      "evidence_tokens": ["0.875% Convertible Senior Notes due 2031", "$603,750,000", "March 15, 2031"]
+    },
+    {
+      "id": "2024-09-19-holdings-capital-snapshot",
+      "event_type": "treasury_capital_snapshot",
+      "effective_at": "2024-09-19",
+      "filed_at": "2024-09-20",
+      "observed_at": "2024-09-20T00:00:00Z",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000119312524222498/d822569d8k.htm",
+      "source_document": "SEC Form 8-K filed 2024-09-20",
+      "facts": [
+        {"name": "bitcoin_acquired", "value": 7420, "unit": "BTC", "fact_class": "event"},
+        {"name": "bitcoin_acquisition_cost_usd", "value": 458200000, "unit": "USD", "fact_class": "event"},
+        {"name": "bitcoin_holdings", "value": 252220, "unit": "BTC", "fact_class": "state"},
+        {"name": "bitcoin_aggregate_purchase_price_usd", "value": 9900000000, "unit": "USD", "fact_class": "state"},
+        {"name": "class_a_shares_outstanding", "value": 182995000, "unit": "shares", "fact_class": "state"},
+        {"name": "class_b_shares_outstanding", "value": 19640000, "unit": "shares", "fact_class": "state"},
+        {"name": "basic_shares_outstanding", "value": 202635000, "unit": "shares", "fact_class": "state"},
+        {"name": "assumed_diluted_shares_outstanding", "value": 235118000, "unit": "shares", "fact_class": "state"},
+        {"name": "pro_forma_aggregate_indebtedness_usd", "value": 4274000000, "unit": "USD", "fact_class": "state"},
+        {"name": "stock_split_ratio", "value": 10, "unit": "new_shares_per_old_share", "fact_class": "historical_adjustment"}
+      ],
+      "evidence_tokens": ["7,420 bitcoins", "$458.2 million", "252,220 bitcoins", "202,635", "235,118", "$4.274 billion", "10-for-1 stock split"]
+    },
+    {
+      "id": "2024-10-30-common-atm",
+      "event_type": "equity_authorization",
+      "effective_at": "2024-10-30",
+      "filed_at": "2024-10-30",
+      "observed_at": "2024-10-30T00:00:00Z",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000119312524247536/d905160d424b5.htm",
+      "source_document": "SEC Form 424B5 filed 2024-10-30",
+      "facts": [
+        {"name": "common_atm_authorized_usd", "value": 21000000000, "unit": "USD", "fact_class": "authorization"}
+      ],
+      "evidence_tokens": ["$21,000,000,000", "class A common stock", "sales agreement"]
+    },
+    {
+      "id": "2024-11-21-convertible-2029",
+      "event_type": "debt_issuance",
+      "effective_at": "2024-11-21",
+      "filed_at": "2024-11-25",
+      "observed_at": "2024-11-25T00:00:00Z",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000119312524264733/d844494d8k.htm",
+      "source_document": "SEC Form 8-K filed 2024-11-25",
+      "facts": [
+        {"name": "principal_usd", "value": 3000000000, "unit": "USD", "fact_class": "event", "instrument": "2029 Convertible Notes"},
+        {"name": "coupon_rate", "value": 0, "unit": "ratio_per_year", "fact_class": "instrument_term", "instrument": "2029 Convertible Notes"},
+        {"name": "net_proceeds_usd", "value": 2970000000, "unit": "USD", "fact_class": "event", "instrument": "2029 Convertible Notes"}
+      ],
+      "evidence_tokens": ["$3.0 billion", "2029 Convertible Notes", "$2.97 billion"]
+    },
+    {
+      "id": "2025-02-05-strk",
+      "event_type": "preferred_issuance",
+      "effective_at": "2025-02-05",
+      "filed_at": "2025-02-05",
+      "observed_at": "2025-02-05T00:00:00Z",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000119312525020868/d791994d8k.htm",
+      "source_document": "SEC Form 8-K filed 2025-02-05",
+      "facts": [
+        {"name": "preferred_shares_issued", "value": 7300000, "unit": "shares", "fact_class": "event", "instrument": "STRK"},
+        {"name": "dividend_rate", "value": 0.08, "unit": "ratio_per_year", "fact_class": "instrument_term", "instrument": "STRK"},
+        {"name": "liquidation_preference_per_share_usd", "value": 100, "unit": "USD_per_share", "fact_class": "instrument_term", "instrument": "STRK"}
+      ],
+      "evidence_tokens": ["7,300,000", "8.00% Series A Perpetual Strike Preferred Stock", "$100"]
+    },
+    {
+      "id": "2025-03-25-strf",
+      "event_type": "preferred_issuance",
+      "effective_at": "2025-03-25",
+      "filed_at": "2025-03-31",
+      "observed_at": "2025-03-31T00:00:00Z",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000095017025047219/mstr-20250331.htm",
+      "source_document": "SEC Form 8-K filed 2025-03-31",
+      "facts": [
+        {"name": "preferred_shares_issued", "value": 8500000, "unit": "shares", "fact_class": "event", "instrument": "STRF"},
+        {"name": "dividend_rate", "value": 0.10, "unit": "ratio_per_year", "fact_class": "instrument_term", "instrument": "STRF"},
+        {"name": "net_proceeds_usd", "value": 711200000, "unit": "USD", "fact_class": "event", "instrument": "STRF"}
+      ],
+      "evidence_tokens": ["8,500,000", "10.00% Series A Perpetual Strife Preferred Stock", "$711.2 million"]
+    },
+    {
+      "id": "2025-06-10-strd",
+      "event_type": "preferred_issuance",
+      "effective_at": "2025-06-10",
+      "filed_at": "2025-06-16",
+      "observed_at": "2025-06-16T00:00:00Z",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000119312525138477/d941529d8k.htm",
+      "source_document": "SEC Form 8-K filed 2025-06-16",
+      "facts": [
+        {"name": "preferred_shares_issued", "value": 11764700, "unit": "shares", "fact_class": "event", "instrument": "STRD"},
+        {"name": "dividend_rate", "value": 0.10, "unit": "ratio_per_year", "fact_class": "instrument_term", "instrument": "STRD"}
+      ],
+      "evidence_tokens": ["11,764,700", "10.00% Series A Perpetual Stride Preferred Stock"]
+    },
+    {
+      "id": "2025-07-29-strc-bitcoin",
+      "event_type": "preferred_issuance_and_bitcoin_acquisition",
+      "effective_at": "2025-07-29",
+      "filed_at": "2025-07-29",
+      "observed_at": "2025-07-29T00:00:00Z",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000119312525167987/d43815dex991.htm",
+      "source_document": "SEC Exhibit 99.1 filed 2025-07-29",
+      "facts": [
+        {"name": "preferred_shares_issued", "value": 28011111, "unit": "shares", "fact_class": "event", "instrument": "STRC"},
+        {"name": "gross_proceeds_usd", "value": 2521000000, "unit": "USD", "fact_class": "event", "instrument": "STRC"},
+        {"name": "net_proceeds_usd", "value": 2474000000, "unit": "USD", "fact_class": "event", "instrument": "STRC"},
+        {"name": "bitcoin_acquired", "value": 21021, "unit": "BTC", "fact_class": "event"},
+        {"name": "bitcoin_holdings", "value": 628791, "unit": "BTC", "fact_class": "state"}
+      ],
+      "evidence_tokens": ["28,011,111", "$2.521 billion", "$2.474 billion", "21,021 bitcoins", "628,791 bitcoins"]
+    },
+    {
+      "id": "2026-05-25-capital-structure",
+      "event_type": "capital_structure_snapshot",
+      "effective_at": "2026-05-25",
+      "filed_at": "2026-05-26",
+      "observed_at": "2026-05-26T00:00:00Z",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000119312526237907/mstr-ex99_1.htm",
+      "source_document": "SEC Exhibit 99.1 filed 2026-05-26",
+      "facts": [
+        {"name": "bitcoin_holdings", "value": 843738, "unit": "BTC", "fact_class": "state"},
+        {"name": "convertible_notes_principal_outstanding_usd", "value": 6700000000, "unit": "USD", "fact_class": "state"},
+        {"name": "preferred_stock_notional_outstanding_usd", "value": 15500000000, "unit": "USD", "fact_class": "state"},
+        {"name": "usd_reserve", "value": 871000000, "unit": "USD", "fact_class": "state"},
+        {"name": "debt_repurchase_principal_usd", "value": 1500000000, "unit": "USD", "fact_class": "event", "instrument": "2029 Convertible Notes"}
+      ],
+      "evidence_tokens": ["843,738 bitcoin", "$6.7 billion", "$15.5 billion", "$871 million", "$1.5 billion"]
+    },
+    {
+      "id": "2026-07-05-bitcoin-sales-reserve",
+      "event_type": "bitcoin_sale_and_reserve_snapshot",
+      "effective_at": "2026-07-05",
+      "filed_at": "2026-07-06",
+      "observed_at": "2026-07-06T00:00:00Z",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000119312526295586/mstr-20260706.htm",
+      "source_document": "SEC Form 8-K filed 2026-07-06",
+      "facts": [
+        {"name": "bitcoin_sold_2026_06_29_to_2026_06_30", "value": 1363, "unit": "BTC", "fact_class": "event"},
+        {"name": "bitcoin_sold_2026_07_01_to_2026_07_05", "value": 2225, "unit": "BTC", "fact_class": "event"},
+        {"name": "bitcoin_holdings", "value": 843775, "unit": "BTC", "fact_class": "state"},
+        {"name": "bitcoin_aggregate_purchase_price_usd", "value": 63690000000, "unit": "USD", "fact_class": "state"},
+        {"name": "usd_reserve", "value": 2550000000, "unit": "USD", "fact_class": "state"},
+        {"name": "bitcoin_monetization_program_remaining_capacity_usd", "value": 1250000000, "unit": "USD", "fact_class": "state"}
+      ],
+      "evidence_tokens": ["1,363", "$80.8", "2,225", "$135.2", "843,775", "$63.69", "$2.55 billion", "$1.25 billion"]
+    }
+  ]
+}
