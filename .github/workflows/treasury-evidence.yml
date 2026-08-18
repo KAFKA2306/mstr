@@ -28,8 +28,6 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    env:
-      SEC_USER_AGENT: KAFKA2306/mstr 137051370+KAFKA2306@users.noreply.github.com
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-python@v6
@@ -39,7 +37,7 @@ jobs:
         run: |
           python -m py_compile scripts/update_treasury.py tests/test_treasury_point_in_time.py
           python -m unittest -v tests.test_treasury_point_in_time
-      - name: Verify SEC submissions metadata and build views
+      - name: Verify issuer archive and build point-in-time views
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             python scripts/update_treasury.py \
@@ -70,9 +68,9 @@ jobs:
           assert len(events) == len(snapshots)
           assert all(event['source_url'].startswith('https://www.sec.gov/Archives/') for event in events)
           assert all(event['accession_number'] for event in events)
-          assert all(len(event['sec_submissions_sha256']) == 64 for event in events)
-          assert manifest['source_url'] == 'https://data.sec.gov/submissions/CIK0001050446.json'
-          assert len(manifest['source_sha256']) == 64
+          assert manifest['issuer_archive']['source_url'] == 'https://www.strategy.com/financial-documents'
+          assert len(manifest['issuer_archive']['sha256']) == 64
+          assert {'SEC Filings and Documents', 'Form 8-K', 'Jul 6, 2026'} <= set(manifest['issuer_archive']['verified_markers'])
           assert '2029 Convertible Notes' in instruments
           assert {'STRK', 'STRF', 'STRD', 'STRC'} <= set(instruments)
           assert latest['state']['bitcoin_holdings']['value'] == 843775
@@ -84,10 +82,10 @@ jobs:
         if: github.event_name == 'pull_request'
         uses: actions/upload-artifact@v7
         with:
-          name: bitcoin-treasury-sec-evidence
+          name: bitcoin-treasury-primary-evidence
           path: build
           retention-days: 30
-      - name: Commit changed SEC evidence and views
+      - name: Commit changed issuer evidence and views
         if: github.event_name != 'pull_request'
         run: |
           git config user.name github-actions[bot]
