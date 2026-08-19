@@ -1,0 +1,76 @@
+{
+  "events": {
+    "2024-03-18-convertible-2031": {
+      "accession_number": "0001193125-24-070793",
+      "document": "d792323dex41.htm",
+      "filed_at": "2024-03-18",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000119312524070793/d792323dex41.htm"
+    },
+    "2024-09-19-holdings-capital-snapshot": {
+      "accession_number": "0001193125-24-222498",
+      "document": "d822569d8k.htm",
+      "filed_at": "2024-09-20",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000119312524222498/d822569d8k.htm"
+    },
+    "2024-10-30-common-atm": {
+      "accession_number": "0001193125-24-247536",
+      "document": "d905160d424b5.htm",
+      "filed_at": "2024-10-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000119312524247536/d905160d424b5.htm"
+    },
+    "2024-11-21-convertible-2029": {
+      "accession_number": "0001193125-24-264733",
+      "document": "d844494d8k.htm",
+      "filed_at": "2024-11-25",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000119312524264733/d844494d8k.htm"
+    },
+    "2025-02-05-strk": {
+      "accession_number": "0001193125-25-020868",
+      "document": "d791994d8k.htm",
+      "filed_at": "2025-02-05",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000119312525020868/d791994d8k.htm"
+    },
+    "2025-03-25-strf": {
+      "accession_number": "0000950170-25-047219",
+      "document": "mstr-20250331.htm",
+      "filed_at": "2025-03-31",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000095017025047219/mstr-20250331.htm"
+    },
+    "2025-06-10-strd": {
+      "accession_number": "0001193125-25-138477",
+      "document": "d941529d8k.htm",
+      "filed_at": "2025-06-16",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000119312525138477/d941529d8k.htm"
+    },
+    "2025-07-29-strc-bitcoin": {
+      "accession_number": "0001193125-25-167987",
+      "document": "d43815dex991.htm",
+      "filed_at": "2025-07-29",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000119312525167987/d43815dex991.htm"
+    },
+    "2026-05-25-capital-structure": {
+      "accession_number": "0001193125-26-237907",
+      "document": "mstr-ex99_1.htm",
+      "filed_at": "2026-05-26",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000119312526237907/mstr-ex99_1.htm"
+    },
+    "2026-07-05-bitcoin-sales-reserve": {
+      "accession_number": "0001193125-26-295586",
+      "document": "mstr-20260706.htm",
+      "filed_at": "2026-07-06",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000119312526295586/mstr-20260706.htm"
+    }
+  },
+  "issuer_archive": {
+    "evidence": null,
+    "http_status": 403,
+    "retrieval_status": "origin_blocked_403",
+    "retrieved_at": "2026-08-19T03:59:08.510922+00:00",
+    "sha256": null,
+    "source_url": "https://www.strategy.com/financial-documents",
+    "verified_markers": []
+  },
+  "provenance_rule": "Curated facts are bound to immutable SEC Archives URLs and accession identities. Strategy's issuer-hosted SEC filing archive is monitored when reachable; an HTTP 403 from GitHub-hosted runners is recorded explicitly and never replaced with third-party data.",
+  "retrieved_at": "2026-08-19T03:59:08.510922+00:00",
+  "schema_version": 4
+}

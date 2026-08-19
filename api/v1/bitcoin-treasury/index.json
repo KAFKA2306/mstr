@@ -1,0 +1,37 @@
+{
+  "coverage": {
+    "event_count": 10,
+    "first_effective_at": "2024-03-18",
+    "last_effective_at": "2026-07-05",
+    "source_accession_count": 10
+  },
+  "dataset": "Strategy Bitcoin treasury point-in-time evidence",
+  "entity": {
+    "cik": "0001050446",
+    "name": "Strategy Inc"
+  },
+  "issuer_archive_monitor": {
+    "evidence": null,
+    "http_status": 403,
+    "retrieval_status": "origin_blocked_403",
+    "retrieved_at": "2026-08-19T03:59:08.510922+00:00",
+    "sha256": null,
+    "source_url": "https://www.strategy.com/financial-documents",
+    "verified_markers": []
+  },
+  "rules": [
+    "company disclosure facts are separate from market observations and derived metrics",
+    "effective_at is the economic/event date; known_at/observed_at gates point-in-time availability",
+    "share counts are never applied before the filing that disclosed them",
+    "historical stock-split adjustments are labeled and do not mutate prior raw disclosures",
+    "every curated event is bound to an immutable SEC Archives URL and parsed accession",
+    "GitHub Actions monitors Strategy's primary issuer archive instead of pretending SEC-host access succeeds"
+  ],
+  "schema_version": 1,
+  "views": {
+    "events": "events.json",
+    "instruments": "instruments.json",
+    "latest": "latest.json",
+    "snapshots": "snapshots.json"
+  }
+}

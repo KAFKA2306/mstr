@@ -1,0 +1,195 @@
+{
+  "instruments": {
+    "2029 Convertible Notes": [
+      {
+        "accession_number": "0001193125-24-264733",
+        "effective_at": "2024-11-21",
+        "event_id": "2024-11-21-convertible-2029",
+        "fact_class": "event",
+        "instrument": "2029 Convertible Notes",
+        "known_at": "2024-11-25T00:00:00Z",
+        "name": "principal_usd",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000119312524264733/d844494d8k.htm",
+        "unit": "USD",
+        "value": 3000000000
+      },
+      {
+        "accession_number": "0001193125-24-264733",
+        "effective_at": "2024-11-21",
+        "event_id": "2024-11-21-convertible-2029",
+        "fact_class": "instrument_term",
+        "instrument": "2029 Convertible Notes",
+        "known_at": "2024-11-25T00:00:00Z",
+        "name": "coupon_rate",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000119312524264733/d844494d8k.htm",
+        "unit": "ratio_per_year",
+        "value": 0
+      },
+      {
+        "accession_number": "0001193125-24-264733",
+        "effective_at": "2024-11-21",
+        "event_id": "2024-11-21-convertible-2029",
+        "fact_class": "event",
+        "instrument": "2029 Convertible Notes",
+        "known_at": "2024-11-25T00:00:00Z",
+        "name": "net_proceeds_usd",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000119312524264733/d844494d8k.htm",
+        "unit": "USD",
+        "value": 2970000000
+      },
+      {
+        "accession_number": "0001193125-26-237907",
+        "effective_at": "2026-05-25",
+        "event_id": "2026-05-25-capital-structure",
+        "fact_class": "event",
+        "instrument": "2029 Convertible Notes",
+        "known_at": "2026-05-26T00:00:00Z",
+        "name": "debt_repurchase_principal_usd",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000119312526237907/mstr-ex99_1.htm",
+        "unit": "USD",
+        "value": 1500000000
+      }
+    ],
+    "STRC": [
+      {
+        "accession_number": "0001193125-25-167987",
+        "effective_at": "2025-07-29",
+        "event_id": "2025-07-29-strc-bitcoin",
+        "fact_class": "event",
+        "instrument": "STRC",
+        "known_at": "2025-07-29T00:00:00Z",
+        "name": "preferred_shares_issued",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000119312525167987/d43815dex991.htm",
+        "unit": "shares",
+        "value": 28011111
+      },
+      {
+        "accession_number": "0001193125-25-167987",
+        "effective_at": "2025-07-29",
+        "event_id": "2025-07-29-strc-bitcoin",
+        "fact_class": "event",
+        "instrument": "STRC",
+        "known_at": "2025-07-29T00:00:00Z",
+        "name": "gross_proceeds_usd",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000119312525167987/d43815dex991.htm",
+        "unit": "USD",
+        "value": 2521000000
+      },
+      {
+        "accession_number": "0001193125-25-167987",
+        "effective_at": "2025-07-29",
+        "event_id": "2025-07-29-strc-bitcoin",
+        "fact_class": "event",
+        "instrument": "STRC",
+        "known_at": "2025-07-29T00:00:00Z",
+        "name": "net_proceeds_usd",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000119312525167987/d43815dex991.htm",
+        "unit": "USD",
+        "value": 2474000000
+      }
+    ],
+    "STRD": [
+      {
+        "accession_number": "0001193125-25-138477",
+        "effective_at": "2025-06-10",
+        "event_id": "2025-06-10-strd",
+        "fact_class": "event",
+        "instrument": "STRD",
+        "known_at": "2025-06-16T00:00:00Z",
+        "name": "preferred_shares_issued",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000119312525138477/d941529d8k.htm",
+        "unit": "shares",
+        "value": 11764700
+      },
+      {
+        "accession_number": "0001193125-25-138477",
+        "effective_at": "2025-06-10",
+        "event_id": "2025-06-10-strd",
+        "fact_class": "instrument_term",
+        "instrument": "STRD",
+        "known_at": "2025-06-16T00:00:00Z",
+        "name": "dividend_rate",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000119312525138477/d941529d8k.htm",
+        "unit": "ratio_per_year",
+        "value": 0.1
+      }
+    ],
+    "STRF": [
+      {
+        "accession_number": "0000950170-25-047219",
+        "effective_at": "2025-03-25",
+        "event_id": "2025-03-25-strf",
+        "fact_class": "event",
+        "instrument": "STRF",
+        "known_at": "2025-03-31T00:00:00Z",
+        "name": "preferred_shares_issued",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000095017025047219/mstr-20250331.htm",
+        "unit": "shares",
+        "value": 8500000
+      },
+      {
+        "accession_number": "0000950170-25-047219",
+        "effective_at": "2025-03-25",
+        "event_id": "2025-03-25-strf",
+        "fact_class": "instrument_term",
+        "instrument": "STRF",
+        "known_at": "2025-03-31T00:00:00Z",
+        "name": "dividend_rate",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000095017025047219/mstr-20250331.htm",
+        "unit": "ratio_per_year",
+        "value": 0.1
+      },
+      {
+        "accession_number": "0000950170-25-047219",
+        "effective_at": "2025-03-25",
+        "event_id": "2025-03-25-strf",
+        "fact_class": "event",
+        "instrument": "STRF",
+        "known_at": "2025-03-31T00:00:00Z",
+        "name": "net_proceeds_usd",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000095017025047219/mstr-20250331.htm",
+        "unit": "USD",
+        "value": 711200000
+      }
+    ],
+    "STRK": [
+      {
+        "accession_number": "0001193125-25-020868",
+        "effective_at": "2025-02-05",
+        "event_id": "2025-02-05-strk",
+        "fact_class": "event",
+        "instrument": "STRK",
+        "known_at": "2025-02-05T00:00:00Z",
+        "name": "preferred_shares_issued",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000119312525020868/d791994d8k.htm",
+        "unit": "shares",
+        "value": 7300000
+      },
+      {
+        "accession_number": "0001193125-25-020868",
+        "effective_at": "2025-02-05",
+        "event_id": "2025-02-05-strk",
+        "fact_class": "instrument_term",
+        "instrument": "STRK",
+        "known_at": "2025-02-05T00:00:00Z",
+        "name": "dividend_rate",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000119312525020868/d791994d8k.htm",
+        "unit": "ratio_per_year",
+        "value": 0.08
+      },
+      {
+        "accession_number": "0001193125-25-020868",
+        "effective_at": "2025-02-05",
+        "event_id": "2025-02-05-strk",
+        "fact_class": "instrument_term",
+        "instrument": "STRK",
+        "known_at": "2025-02-05T00:00:00Z",
+        "name": "liquidation_preference_per_share_usd",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000119312525020868/d791994d8k.htm",
+        "unit": "USD_per_share",
+        "value": 100
+      }
+    ]
+  },
+  "schema_version": 1
+}

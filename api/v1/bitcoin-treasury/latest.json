@@ -1,0 +1,131 @@
+{
+  "entity": {
+    "cik": "0001050446",
+    "name": "Strategy Inc"
+  },
+  "known_at": "2026-07-06T00:00:00Z",
+  "schema_version": 1,
+  "state": {
+    "assumed_diluted_shares_outstanding": {
+      "accession_number": "0001193125-24-222498",
+      "effective_at": "2024-09-19",
+      "fact_class": "state",
+      "known_at": "2024-09-20T00:00:00Z",
+      "name": "assumed_diluted_shares_outstanding",
+      "source_event_id": "2024-09-19-holdings-capital-snapshot",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000119312524222498/d822569d8k.htm",
+      "unit": "shares",
+      "value": 235118000
+    },
+    "basic_shares_outstanding": {
+      "accession_number": "0001193125-24-222498",
+      "effective_at": "2024-09-19",
+      "fact_class": "state",
+      "known_at": "2024-09-20T00:00:00Z",
+      "name": "basic_shares_outstanding",
+      "source_event_id": "2024-09-19-holdings-capital-snapshot",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000119312524222498/d822569d8k.htm",
+      "unit": "shares",
+      "value": 202635000
+    },
+    "bitcoin_aggregate_purchase_price_usd": {
+      "accession_number": "0001193125-26-295586",
+      "effective_at": "2026-07-05",
+      "fact_class": "state",
+      "known_at": "2026-07-06T00:00:00Z",
+      "name": "bitcoin_aggregate_purchase_price_usd",
+      "source_event_id": "2026-07-05-bitcoin-sales-reserve",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000119312526295586/mstr-20260706.htm",
+      "unit": "USD",
+      "value": 63690000000
+    },
+    "bitcoin_holdings": {
+      "accession_number": "0001193125-26-295586",
+      "effective_at": "2026-07-05",
+      "fact_class": "state",
+      "known_at": "2026-07-06T00:00:00Z",
+      "name": "bitcoin_holdings",
+      "source_event_id": "2026-07-05-bitcoin-sales-reserve",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000119312526295586/mstr-20260706.htm",
+      "unit": "BTC",
+      "value": 843775
+    },
+    "bitcoin_monetization_program_remaining_capacity_usd": {
+      "accession_number": "0001193125-26-295586",
+      "effective_at": "2026-07-05",
+      "fact_class": "state",
+      "known_at": "2026-07-06T00:00:00Z",
+      "name": "bitcoin_monetization_program_remaining_capacity_usd",
+      "source_event_id": "2026-07-05-bitcoin-sales-reserve",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000119312526295586/mstr-20260706.htm",
+      "unit": "USD",
+      "value": 1250000000
+    },
+    "class_a_shares_outstanding": {
+      "accession_number": "0001193125-24-222498",
+      "effective_at": "2024-09-19",
+      "fact_class": "state",
+      "known_at": "2024-09-20T00:00:00Z",
+      "name": "class_a_shares_outstanding",
+      "source_event_id": "2024-09-19-holdings-capital-snapshot",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000119312524222498/d822569d8k.htm",
+      "unit": "shares",
+      "value": 182995000
+    },
+    "class_b_shares_outstanding": {
+      "accession_number": "0001193125-24-222498",
+      "effective_at": "2024-09-19",
+      "fact_class": "state",
+      "known_at": "2024-09-20T00:00:00Z",
+      "name": "class_b_shares_outstanding",
+      "source_event_id": "2024-09-19-holdings-capital-snapshot",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000119312524222498/d822569d8k.htm",
+      "unit": "shares",
+      "value": 19640000
+    },
+    "convertible_notes_principal_outstanding_usd": {
+      "accession_number": "0001193125-26-237907",
+      "effective_at": "2026-05-25",
+      "fact_class": "state",
+      "known_at": "2026-05-26T00:00:00Z",
+      "name": "convertible_notes_principal_outstanding_usd",
+      "source_event_id": "2026-05-25-capital-structure",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000119312526237907/mstr-ex99_1.htm",
+      "unit": "USD",
+      "value": 6700000000
+    },
+    "preferred_stock_notional_outstanding_usd": {
+      "accession_number": "0001193125-26-237907",
+      "effective_at": "2026-05-25",
+      "fact_class": "state",
+      "known_at": "2026-05-26T00:00:00Z",
+      "name": "preferred_stock_notional_outstanding_usd",
+      "source_event_id": "2026-05-25-capital-structure",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000119312526237907/mstr-ex99_1.htm",
+      "unit": "USD",
+      "value": 15500000000
+    },
+    "pro_forma_aggregate_indebtedness_usd": {
+      "accession_number": "0001193125-24-222498",
+      "effective_at": "2024-09-19",
+      "fact_class": "state",
+      "known_at": "2024-09-20T00:00:00Z",
+      "name": "pro_forma_aggregate_indebtedness_usd",
+      "source_event_id": "2024-09-19-holdings-capital-snapshot",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000119312524222498/d822569d8k.htm",
+      "unit": "USD",
+      "value": 4274000000
+    },
+    "usd_reserve": {
+      "accession_number": "0001193125-26-295586",
+      "effective_at": "2026-07-05",
+      "fact_class": "state",
+      "known_at": "2026-07-06T00:00:00Z",
+      "name": "usd_reserve",
+      "source_event_id": "2026-07-05-bitcoin-sales-reserve",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000119312526295586/mstr-20260706.htm",
+      "unit": "USD",
+      "value": 2550000000
+    }
+  }
+}
