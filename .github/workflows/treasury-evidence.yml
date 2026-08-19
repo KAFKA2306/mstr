@@ -93,7 +93,10 @@ jobs:
           git add data/treasury/evidence api/v1/bitcoin-treasury
           if git diff --cached --quiet; then
             echo 'No treasury evidence change.'
-            exit 0
+          else
+            git commit -m 'data: update Strategy treasury evidence'
+            git push
           fi
-          git commit -m 'data: update Strategy treasury evidence'
-          git push
+          git fetch origin main
+          test "$(git ls-tree -r --name-only origin/main | grep -c '^api/v1/bitcoin-treasury/index.json$')" -eq 1
+          test "$(git ls-tree -r --name-only origin/main | grep -c '^data/treasury/evidence/manifest.json$')" -eq 1
