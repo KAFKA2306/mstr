@@ -5,6 +5,7 @@ on:
     paths:
       - data/treasury/**
       - scripts/update_treasury.py
+      - scripts/publish_treasury.py
       - tests/test_treasury_point_in_time.py
       - .github/workflows/treasury-evidence.yml
   push:
@@ -12,6 +13,7 @@ on:
     paths:
       - data/treasury/major-events.json
       - scripts/update_treasury.py
+      - scripts/publish_treasury.py
       - .github/workflows/treasury-evidence.yml
   schedule:
     - cron: '37 13 * * *'
@@ -35,16 +37,16 @@ jobs:
           python-version: '3.12'
       - name: Compile and unit test
         run: |
-          python -m py_compile scripts/update_treasury.py tests/test_treasury_point_in_time.py
+          python -m py_compile scripts/update_treasury.py scripts/publish_treasury.py tests/test_treasury_point_in_time.py
           python -m unittest -v tests.test_treasury_point_in_time
-      - name: Verify issuer archive and build point-in-time views
+      - name: Verify primary-source identities and build point-in-time views
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
-            python scripts/update_treasury.py \
+            python scripts/publish_treasury.py \
               --evidence-dir build/data/treasury/evidence \
               --api-dir build/api/v1/bitcoin-treasury
           else
-            python scripts/update_treasury.py
+            python scripts/publish_treasury.py
           fi
       - name: Audit point-in-time outputs
         run: |
@@ -60,6 +62,7 @@ jobs:
           latest = json.loads((root/'latest.json').read_text())
           instruments = json.loads((root/'instruments.json').read_text())['instruments']
           manifest = json.loads((evidence/'manifest.json').read_text())
+          archive = manifest['issuer_archive']
 
           assert index['coverage']['event_count'] >= 10
           assert index['coverage']['source_accession_count'] == len(events)
@@ -68,9 +71,17 @@ jobs:
           assert len(events) == len(snapshots)
           assert all(event['source_url'].startswith('https://www.sec.gov/Archives/') for event in events)
           assert all(event['accession_number'] for event in events)
-          assert manifest['issuer_archive']['source_url'] == 'https://www.strategy.com/financial-documents'
-          assert len(manifest['issuer_archive']['sha256']) == 64
-          assert {'SEC Filings and Documents', 'Form 8-K', 'Jul 6, 2026'} <= set(manifest['issuer_archive']['verified_markers'])
+          assert archive['source_url'] == 'https://www.strategy.com/financial-documents'
+          assert archive['retrieval_status'] in {'ok', 'origin_blocked_403'}
+          if archive['retrieval_status'] == 'ok':
+              assert archive['http_status'] == 200
+              assert len(archive['sha256']) == 64
+              assert {'SEC Filings and Documents', 'Form 8-K', 'Jul 6, 2026'} <= set(archive['verified_markers'])
+          else:
+              assert archive['http_status'] == 403
+              assert archive['sha256'] is None
+              assert archive['evidence'] is None
+              assert archive['verified_markers'] == []
           assert '2029 Convertible Notes' in instruments
           assert {'STRK', 'STRF', 'STRD', 'STRC'} <= set(instruments)
           assert latest['state']['bitcoin_holdings']['value'] == 843775
