@@ -16,8 +16,22 @@ Own Bitcoin-treasury company evidence for this repository: corporate Bitcoin hol
 2. Resume one canonical existing workline before creating another collector, ledger, branch or Issue.
 3. Prefer new verified issuer records, correction of identity/period/dilution semantics, reproducible treasury metrics, user-visible evidence, then simplification.
 4. Materialize primary evidence before downstream calculations; keep observations and derived metrics distinct.
-5. Run focused deterministic checks and verify the reviewed/merged/public revision when applicable.
+5. Run focused deterministic checks and verify the exact reviewed revision before merge.
 6. Stop at the fixed point; do not create speculative valuation or financing scenarios merely because new filings exist.
+
+## Merge and release are separate
+
+### PR merge conditions
+
+A PR may merge when the repository-local issuer/treasury contract is correct on the exact head revision: filing provenance and period/unit semantics are preserved, focused deterministic tests pass, generated artifacts are reproducible where affected, and no unresolved review or correctness blocker remains.
+
+A future issuer filing, live SEC/IR fetch after merge, public deployment, or observed corporate outcome is **not** a merge condition unless the PR specifically changes the release/live-acquisition mechanism and that mechanism must be validated before merge.
+
+### Product/data release conditions
+
+Release is a separate post-merge decision. Treat treasury evidence/views as released only after the merged `main` revision is read back and the release surfaces in scope are actually verified, including fresh primary-source acquisition when required, published artifacts/API/UI, deployment identity, and rollback/rebuild path where applicable.
+
+A merged PR does not prove a new filing was acquired or a product was released. A live-source/deployment blocker may block release without invalidating a correctly merged repository change. Report merge and release independently.
 
 ## Boundaries
 
@@ -28,4 +42,4 @@ Own Bitcoin-treasury company evidence for this repository: corporate Bitcoin hol
 
 ## Completion report
 
-Report verified issuer/treasury evidence Before -> After, canonical artifact/source, Issue/PR/commit/check/public evidence when applicable, duplication/manual work removed, and remaining blocker.
+Report verified issuer/treasury evidence Before -> After, canonical artifact/source, Issue/PR/commit/check evidence, then report `merged` and `released` separately with direct evidence for each. Include duplication/manual work removed and remaining blocker.
