@@ -1,0 +1,115 @@
+name: Deploy Pages
+
+on:
+  pull_request:
+    paths:
+      - 'web/**'
+      - 'data/verified_btc_disclosures_2026.json'
+      - 'scripts/verify_btc_disclosures.py'
+      - '.github/workflows/pages.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'web/**'
+      - 'data/verified_btc_disclosures_2026.json'
+      - 'scripts/verify_btc_disclosures.py'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Validate verified disclosure ledger
+        run: |
+          python scripts/verify_btc_disclosures.py
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path('data/verified_btc_disclosures_2026.json').read_text())
+          records=[r for r in d['records'] if r.get('as_of_date')]
+          latest=max(records,key=lambda r:(r['as_of_date'],r['reported_date'],r['record_id']))
+          assert latest['as_of_date'] >= '2026-08-02'
+          assert latest['total_btc'] == d['latest_verified']['total_btc']
+          assert latest['aggregate_purchase_price_usd'] == d['latest_verified']['aggregate_purchase_price_usd']
+          assert latest['average_purchase_price_usd'] == d['latest_verified']['average_purchase_price_usd']
+          assert latest['source_url'].startswith('https://www.sec.gov/Archives/')
+          assert all(r['verification_status']=='primary_source_verified' for r in records)
+          PY
+      - name: Validate dashboard JavaScript
+        run: |
+          python - <<'PY'
+          import re
+          from pathlib import Path
+          html=Path('web/index.html').read_text()
+          scripts=re.findall(r'<script>(.*?)</script>',html,re.S)
+          assert len(scripts)==1
+          Path('/tmp/dashboard.js').write_text(scripts[0])
+          assert 'latest verified disclosure' in html.lower()
+          assert 'latest verified disclosure ≠ current company state' in html.lower()
+          assert 'verified_btc_disclosures_2026.json' in html
+          PY
+          node --check /tmp/dashboard.js
+
+  deploy:
+    if: github.event_name != 'pull_request'
+    needs: validate
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v6
+      - name: Build static artifact
+        run: |
+          mkdir -p _site
+          cp web/index.html _site/index.html
+          cp data/verified_btc_disclosures_2026.json _site/verified_btc_disclosures_2026.json
+          printf '{"sha":"%s"}\n' '${{ github.sha }}' > _site/deployment.json
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+      - name: Deploy Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+      - name: Verify production artifact
+        env:
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+          EXPECTED_SHA: ${{ github.sha }}
+        run: |
+          python - <<'PY'
+          import json, os, time, urllib.request
+          base=os.environ['PAGE_URL'].rstrip('/')+'/'
+          expected=os.environ['EXPECTED_SHA']
+          last=None
+          for _ in range(12):
+              try:
+                  with urllib.request.urlopen(base+'deployment.json',timeout=20) as r:
+                      meta=json.load(r)
+                  with urllib.request.urlopen(base+'verified_btc_disclosures_2026.json',timeout=20) as r:
+                      data=json.load(r)
+                  latest=data['latest_verified']
+                  if meta.get('sha')==expected and latest['as_of_date']>='2026-08-02' and latest['total_btc']==842138:
+                      print('PRODUCTION_VERIFIED',base,expected,latest['as_of_date'],latest['total_btc'])
+                      break
+                  last=(meta,latest)
+              except Exception as exc:
+                  last=repr(exc)
+              time.sleep(5)
+          else:
+              raise SystemExit(f'production verification failed: {last!r}')
+          PY
