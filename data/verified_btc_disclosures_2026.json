@@ -5,10 +5,12 @@
   "scope": "Primary-source-verified 2026 bitcoin acquisition, sale, and no-change disclosures. Legacy pre-2026 holdings remain archival and are not merged into this ledger.",
   "reconciliation_policy": "Reported aggregate BTC holdings are authoritative. Do not infer undisclosed adjustments from adjacent btc_delta arithmetic.",
   "latest_verified": {
-    "as_of_date": "2026-07-12",
-    "reported_date": "2026-07-13",
-    "total_btc": 843775,
-    "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000119312526301483/mstr-20260713.htm"
+    "as_of_date": "2026-08-02",
+    "reported_date": "2026-08-03",
+    "total_btc": 842138,
+    "aggregate_purchase_price_usd": 63510000000,
+    "average_purchase_price_usd": 75419,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1050446/000119312526329565/mstr-20260803.htm"
   },
   "records": [
     {"record_id":"2026-01-05-acquisition","reported_date":"2026-01-05","as_of_date":"2026-01-04","event_type":"acquisition","btc_delta":1283,"total_btc":673783,"source_type":"sec_8k","source_url":"https://www.sec.gov/Archives/edgar/data/1050446/000119312526001550/mstr-20260105.htm","verification_status":"primary_source_verified"},
@@ -37,6 +39,9 @@
     {"record_id":"2026-06-29-no-change","reported_date":"2026-06-29","as_of_date":"2026-06-28","event_type":"no_change","btc_delta":0,"total_btc":847363,"source_type":"sec_8k","source_url":"https://www.sec.gov/Archives/edgar/data/1050446/000119312526286871/mstr-20260629.htm","verification_status":"primary_source_verified"},
     {"record_id":"2026-07-06-sale-june","reported_date":"2026-07-06","as_of_date":"2026-06-30","event_type":"sale","btc_delta":-1363,"total_btc":846000,"source_type":"sec_8k","source_url":"https://www.sec.gov/Archives/edgar/data/1050446/000119312526295586/mstr-20260706.htm","verification_status":"primary_source_verified"},
     {"record_id":"2026-07-06-sale-july","reported_date":"2026-07-06","as_of_date":"2026-07-05","event_type":"sale","btc_delta":-2225,"total_btc":843775,"source_type":"sec_8k","source_url":"https://www.sec.gov/Archives/edgar/data/1050446/000119312526295586/mstr-20260706.htm","verification_status":"primary_source_verified"},
-    {"record_id":"2026-07-13-no-change","reported_date":"2026-07-13","as_of_date":"2026-07-12","event_type":"no_change","btc_delta":0,"total_btc":843775,"source_type":"sec_8k","source_url":"https://www.sec.gov/Archives/edgar/data/1050446/000119312526301483/mstr-20260713.htm","verification_status":"primary_source_verified"}
+    {"record_id":"2026-07-13-no-change","reported_date":"2026-07-13","as_of_date":"2026-07-12","event_type":"no_change","btc_delta":0,"total_btc":843775,"source_type":"sec_8k","source_url":"https://www.sec.gov/Archives/edgar/data/1050446/000119312526301483/mstr-20260713.htm","verification_status":"primary_source_verified"},
+    {"record_id":"2026-07-20-no-change","reported_date":"2026-07-20","as_of_date":"2026-07-19","event_type":"no_change","btc_delta":0,"total_btc":843775,"aggregate_purchase_price_usd":63690000000,"average_purchase_price_usd":75476,"usd_reserve_usd":3225000000,"source_type":"sec_8k","source_url":"https://www.sec.gov/Archives/edgar/data/1050446/000119312526308369/mstr-20260720.htm","verification_status":"primary_source_verified"},
+    {"record_id":"2026-07-27-no-change","reported_date":"2026-07-27","as_of_date":"2026-07-26","event_type":"no_change","btc_delta":0,"total_btc":843775,"aggregate_purchase_price_usd":63690000000,"average_purchase_price_usd":75476,"usd_reserve_usd":3750000000,"source_type":"sec_8k","source_url":"https://www.sec.gov/Archives/edgar/data/1050446/000119312526316917/mstr-20260727.htm","verification_status":"primary_source_verified"},
+    {"record_id":"2026-08-03-sale","reported_date":"2026-08-03","as_of_date":"2026-08-02","event_type":"sale","btc_delta":-1638,"total_btc":842138,"aggregate_purchase_price_usd":63510000000,"average_purchase_price_usd":75419,"btc_sale_price_usd":104730000,"average_sale_price_usd":63957,"usd_reserve_usd":4000000000,"source_type":"sec_8k","source_url":"https://www.sec.gov/Archives/edgar/data/1050446/000119312526329565/mstr-20260803.htm","verification_status":"primary_source_verified"}
   ]
 }

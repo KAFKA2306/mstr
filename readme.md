@@ -1,114 +1,76 @@
-# Strategy / Bitcoin 分析
+# Strategy Bitcoin Treasury Evidence
 
 [![Verified Strategy BTC disclosures](https://github.com/KAFKA2306/mstr/actions/workflows/verified-btc-disclosures.yml/badge.svg)](https://github.com/KAFKA2306/mstr/actions/workflows/verified-btc-disclosures.yml)
+[![Deploy Pages](https://github.com/KAFKA2306/mstr/actions/workflows/pages.yml/badge.svg)](https://github.com/KAFKA2306/mstr/actions/workflows/pages.yml)
 
-> **状態:** このrepositoryには、(1) 2020〜2024年を中心に作成された探索的分析と、(2) 2026年のStrategy Inc.公式開示をpoint-in-timeで保存する限定的な一次資料ledgerが共存しています。旧分析のCSV・図表を現在値として使わないでください。
+Strategy Inc. のBitcoin treasuryを、SEC / Strategy公式開示のpoint-in-time ledgerとして追跡します。
 
-## Vision
+**Public dashboard:** https://kafka2306.github.io/mstr/
 
-Strategy Inc.とBitcoinの関係を分析するとき、**過去に何が分かっていたか、どの値が後から追加されたか、どの計算が現在の判断には再利用できないか**を区別できるresearch archiveにします。
+## Current authority
 
-## Design philosophy
+Bitcoin holdingsのcurrent-facing authorityは [`data/verified_btc_disclosures_2026.json`](data/verified_btc_disclosures_2026.json) です。
 
-- 企業開示、market data、独自CSVを分離する
-- `effective_at`、`filed_at`、`observed_at`を混同しない
-- 過去の保有量・株価・ratioを現在値として表示しない
-- current shares outstandingをhistorical market capへ適用しない
-- forward fillをinformation availabilityの証明にしない
-- 公式開示を保存する場合はSEC accessionや発行体URLを保持する
-- 未確認のNAV、premium、leverage、投資判断をこのrepositoryから推定しない
+- `reported_date`: 開示日
+- `as_of_date`: 開示が対象とする状態日
+- `event_type`: `acquisition` / `sale` / `no_change`
+- `btc_delta`: その開示で明示された増減
+- `total_btc`: 開示されたaggregate BTC holdings
+- `source_url`: SEC ArchivesまたはStrategy公式一次情報
+- `verification_status`: primary source確認状態
 
-## Why
+報告されたaggregate holdingsをauthorityとし、隣接する`btc_delta`の算術差から未開示調整を補完しません。
 
-このrepositoryの価値は、古いnotebookをそのまま残すことではなく、**historical exploratory analysisと、後から追加したpoint-in-time一次資料を明確に分離し、どの結論が再利用可能かを判断できること**です。
+## Public dashboard contract
 
-## 現在確認できる構成
+[`web/index.html`](web/index.html) はverified disclosure ledgerだけをcurrent BTC stateとして読みます。
 
-| パス | 役割 |
-|---|---|
-| `src/yf.py` | yfinanceと旧入力CSVを結合し、日次・月次metricsを生成する探索コード |
-| `src/graph.py` | 過去の分析図を生成 |
-| `data/btcholdings.csv` | 旧Bitcoin保有量入力 |
-| `data/mstr_financial_data.csv` | 旧財務入力 |
-| `data/official/` | Strategy公式開示から保存した限定的な一次資料snapshot |
-| `data/treasury/major-events.json` | SEC accession等へ結び付けたtreasury event ledger |
-| `data/verified_btc_disclosures_2026.json` | 2026年の検証対象BTC開示 |
-| `src/current_btc_state.py` | 検証済み開示から指定時点のBTC stateを再構成 |
-| `output/` | 過去に生成されたCSV・画像・report |
-| `stats.md` | rolling return、beta、volatility、correlation、Sharpe ratioの過去解釈 |
+- latest verified BTC holdings
+- aggregate purchase price / average purchase price（最新recordに一次開示がある場合）
+- previous verified stateとの差分
+- `as_of_date` / `reported_date`
+- recent acquisition / sale / no-change timeline
+- primary sourceへの直接link
+- last verified stateのage
 
-## 2026年に検証済みの限定的な現在情報
+**古い開示を今日の状態としてforward-fillしません。** 新しい一次開示がledgerに存在しない場合は、最後に確認できた状態とその古さをそのまま表示します。
 
-Strategy Inc.は、2026年7月6日提出のForm 8-Kで、**2026年7月5日時点のBitcoin保有量843,775 BTC、aggregate purchase price $63.69 billion、average purchase price $75,476**を開示しています。
+## Historical archive
 
-- SEC filing: https://www.sec.gov/Archives/edgar/data/1050446/000119312526295586/mstr-20260706.htm
-- repository snapshot: `data/official/strategy-btc-2026-07-05.json`
+このrepositoryには2020〜2024年中心の探索的分析も残っています。
 
-この値は上記開示日時点のsnapshotです。現在の保有量を意味しません。新しい開示がある場合は、必ず新しいSEC filingまたはStrategy公式開示を確認してください。
+- `src/yf.py`
+- `src/graph.py`
+- `data/btcholdings.csv`
+- `data/mstr_financial_data.csv`
+- `output/`
+- `stats.md`
 
-## Historical analysis の処理
+これらはresearch historyであり、current holdings / NAV / premium / leverageのauthorityではありません。旧forward-filled outputや実行時shares outstandingをpoint-in-time current stateへ再利用しません。
 
-`src/yf.py`は次を結合します。
+## Other treasury evidence
 
-```text
-MSTR close
-BTC-USD close
-S&P 500 close
-Bitcoin保有量CSV
-財務CSV
-yfinanceのquarterly balance sheet
+[`data/treasury/major-events.json`](data/treasury/major-events.json) と `api/v1/bitcoin-treasury/` はcapital structureを含む広いtreasury event modelです。週次BTC holdingsのcurrent-facing authorityとは責務を分けています。
+
+二つのledgerで同じcurrent BTC valueを手作業同期することを前提にしません。統合する場合は、verified disclosure ledgerをBTC holdings sourceとして生成する形に寄せます。
+
+## Validation
+
+```bash
+python scripts/verify_btc_disclosures.py
+python src/current_btc_state.py
+python -m unittest discover -s tests -v
 ```
 
-その後、Bitcoin保有価値、時価総額比率、financial leverage等を計算し、日次・月次CSVを生成します。この経路はpoint-in-time整合を保証しません。
+`Deploy Pages` workflowはPRでledger semanticsとdashboard JavaScriptを検証し、mainでは同じverified ledgerをGitHub Pagesへdeployします。deploy後に公開`deployment.json`のcommit SHAとlatest disclosure identityを照合します。
 
-## 重要な制約
+## Source policy
 
-### 旧図表と数値は現在値ではない
+- SEC Archives / Strategy公式開示を優先する
+- `effective/as-of` と `reported/known` を分離する
+- acquisition / sale / no-changeを別eventとして保持する
+- historical exploratory outputをcurrent stateへ昇格しない
+- sourceにないNAV、premium、leverage、現在株式数を推測しない
+- 新しい開示が未収録ならstaleをstaleのまま示す
 
-`output/`、旧CSV、`stats.md`にある値は主に2020〜2024年の探索結果です。2026年の企業状態として利用できません。
-
-### point-in-time整合を保証しない旧計算
-
-`src/yf.py`は実行時に取得した`sharesOutstanding`を時系列全体の時価総額計算へ使用します。過去時点ごとの株式数、株式分割、増資、転換、企業actionを完全に保持するmodelではありません。
-
-### forward fill
-
-旧分析は異なる頻度の価格・保有量・財務データをouter joinし、欠損をforward fillします。公表日、対象期間、情報が市場で利用可能になった時点を区別していないため、backtestや因果評価には利用できません。
-
-### provenance
-
-- 旧`data/*.csv`の全行に一次source、取得日時、document ID、単位、訂正版identityが付いているわけではありません
-- `requirements.txt`は存在せず、旧探索分析の依存versionは固定されていません
-- 旧探索分析全体には再現可能な自動test、再生成hash、data freshness監査がありません
-- 2026年の限定的なtreasury dataは、`Verified Strategy BTC disclosures` workflowとpoint-in-time ledgerで別管理しています
-- yfinanceの応答・schema・補正方法は将来変わる可能性があります
-
-## 現在できること
-
-- 2020〜2024年中心の探索コード・CSV・図表を研究履歴として読む
-- 旧分析のpoint-in-time不整合を確認する
-- repositoryに保存された2026年の限定的なStrategy公式開示をSEC filingへ追跡する
-- `data/treasury/major-events.json`から保存済みeventのeffective / filing時点を確認する
-- point-in-time data modelを再設計する材料にする
-
-## 現在できないこと
-
-- repositoryだけから現在時点のBitcoin保有量、NAV、premium、leverageを断定する
-- 旧探索CSVから公式開示と一致するhistorical market capやdilutionを再現する
-- 旧forward-filled outputを再現可能なbacktestへ利用する
-- 投資助言、売買判断、企業価値評価を保証する
-
-## 再構築・拡張する場合
-
-1. SEC / Strategy公式開示を正準sourceとして、accession、document URL、公表日時、訂正版を保存する
-2. Bitcoin取得・売却、数量、取得価額、資金調達、株式数、債務・優先株をpoint-in-timeで保持する
-3. corporate action、希薄化、転換可能証券を時点別に反映する
-4. 実績、会社開示、外部market data、独自推計を分離する
-5. raw data、変換、code commit、設定、生成物hashを結ぶprovenanceを維持する
-6. clean environmentで依存・test・再生成を検証する
-
-## 注意
-
-このrepositoryの生成物と記述は投資助言ではありません。固定されたsnapshotから現在の企業状態を推測せず、現在値が必要な場合は最新のSEC filingまたはStrategy公式開示を確認してください。
-
-**README監査日:** 2026-08-18
+このrepositoryは投資助言・売買signalを提供しません。

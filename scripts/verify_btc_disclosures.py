@@ -13,6 +13,13 @@ from src.current_btc_state import latest_verified_state, load_verified_btc_discl
 ALLOWED_EVENT_TYPES = {"acquisition", "sale", "no_change"}
 ALLOWED_SOURCE_TYPES = {"sec_8k", "strategy_official"}
 ALLOWED_HOSTS = {"www.sec.gov", "www.strategy.com"}
+OPTIONAL_NONNEGATIVE_FIELDS = {
+    "aggregate_purchase_price_usd",
+    "average_purchase_price_usd",
+    "btc_sale_price_usd",
+    "average_sale_price_usd",
+    "usd_reserve_usd",
+}
 
 
 def parse_iso_date(value: str, field: str) -> date:
@@ -58,20 +65,37 @@ def main() -> None:
             assert btc_delta == 0, f"no_change must have zero btc_delta: {record_id}"
 
         assert isinstance(record["total_btc"], int) and record["total_btc"] > 0
+        for field in OPTIONAL_NONNEGATIVE_FIELDS:
+            if field in record:
+                value = record[field]
+                assert isinstance(value, (int, float)) and value >= 0, (
+                    f"{field} must be non-negative numeric: {record_id}"
+                )
+
         assert record["source_type"] in ALLOWED_SOURCE_TYPES
         assert record["verification_status"] == "primary_source_verified"
         parsed = urlparse(record["source_url"])
         assert parsed.scheme == "https", f"non-HTTPS source: {record_id}"
         assert parsed.netloc in ALLOWED_HOSTS, f"non-primary host: {record_id}"
 
-    assert order_keys == sorted(order_keys), "records must be ordered by report date and disclosed as-of state"
+    assert order_keys == sorted(order_keys), (
+        "records must be ordered by report date and disclosed as-of state"
+    )
 
     latest = latest_verified_state(data)
     declared = data["latest_verified"]
     for key in ("as_of_date", "reported_date", "total_btc", "source_url"):
         assert latest[key] == declared[key], f"latest_verified mismatch for {key}"
 
-    assert data["reconciliation_policy"].startswith("Reported aggregate BTC holdings are authoritative")
+    for key in ("aggregate_purchase_price_usd", "average_purchase_price_usd"):
+        if key in latest or key in declared:
+            assert latest.get(key) == declared.get(key), (
+                f"latest_verified mismatch for {key}"
+            )
+
+    assert data["reconciliation_policy"].startswith(
+        "Reported aggregate BTC holdings are authoritative"
+    )
 
     print(
         f"validated {len(records)} primary-source BTC disclosures; "
