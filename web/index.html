@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Strategy Bitcoin treasury state from primary-source verified disclosures.">
+  <title>Strategy Bitcoin Treasury — Verified Disclosures</title>
+  <style>
+    :root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#151515;background:#f6f5f1;line-height:1.5}
+    *{box-sizing:border-box} body{margin:0} main{max-width:1080px;margin:auto;padding:28px 18px 64px}
+    h1{font-size:clamp(2rem,6vw,4.4rem);line-height:.98;letter-spacing:-.055em;margin:.25rem 0 1rem;max-width:800px}
+    h2{margin-top:2.2rem;font-size:1.35rem} p{max-width:760px}.eyebrow{font-size:.78rem;text-transform:uppercase;letter-spacing:.12em;font-weight:700}
+    .status{display:inline-block;border:1px solid #111;border-radius:999px;padding:.35rem .65rem;font-size:.82rem;font-weight:700;margin:.5rem 0}
+    .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:24px 0}.card{background:white;border:1px solid #d7d4cc;border-radius:14px;padding:16px;min-height:132px}.label{font-size:.78rem;color:#666;text-transform:uppercase;letter-spacing:.07em}.value{font-size:clamp(1.5rem,4vw,2.65rem);font-weight:760;letter-spacing:-.04em;margin:.3rem 0}.sub{font-size:.86rem;color:#555}.notice{border-left:4px solid #222;padding:12px 16px;background:#eceae3;margin:20px 0}.timeline{display:grid;gap:8px}.row{display:grid;grid-template-columns:120px 120px 1fr auto;gap:12px;align-items:center;background:#fff;border:1px solid #ddd9d0;border-radius:10px;padding:12px}.delta{font-variant-numeric:tabular-nums;font-weight:700}.muted{color:#666}.sale{font-weight:700}.acquisition{font-weight:700}.no_change{color:#666}a{color:inherit}.footer{margin-top:36px;font-size:.84rem;color:#666}
+    @media(max-width:760px){.grid{grid-template-columns:1fr 1fr}.row{grid-template-columns:1fr 1fr}.row .source{grid-column:1/-1}}
+    @media(max-width:440px){.grid{grid-template-columns:1fr}.row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">Primary-source verified · Strategy Inc</div>
+  <h1>Bitcoin treasury, as last officially disclosed.</h1>
+  <p>This page reports the latest state present in the repository's verified 2026 disclosure ledger. It does not infer today's holdings from an older filing.</p>
+  <div id="status" class="status">Loading verified disclosure…</div>
+
+  <section class="grid" aria-label="Latest verified treasury state">
+    <div class="card"><div class="label">BTC holdings</div><div id="holdings" class="value">—</div><div id="holdingsDelta" class="sub">—</div></div>
+    <div class="card"><div class="label">Aggregate purchase price</div><div id="cost" class="value">—</div><div class="sub">Official disclosed cost basis</div></div>
+    <div class="card"><div class="label">Average purchase price</div><div id="avg" class="value">—</div><div class="sub">Inclusive of fees and expenses</div></div>
+    <div class="card"><div class="label">Disclosure as-of</div><div id="asof" class="value">—</div><div id="reported" class="sub">—</div></div>
+  </section>
+
+  <div class="notice"><strong>Latest verified disclosure ≠ current company state.</strong> If no newer primary-source record is present, the page preserves the last verified state and shows its age instead of forward-filling it.</div>
+
+  <h2>Recent verified disclosures</h2>
+  <div id="timeline" class="timeline" aria-live="polite"></div>
+
+  <h2>Data contract</h2>
+  <p class="muted">Aggregate reported holdings are authoritative. Acquisition, sale and no-change disclosures remain separate events. Legacy exploratory CSVs, yfinance-derived values, NAV estimates and forward-filled outputs are not used for this current-state surface.</p>
+  <p><a href="https://github.com/KAFKA2306/mstr/blob/main/data/verified_btc_disclosures_2026.json">Canonical ledger</a> · <a href="https://github.com/KAFKA2306/mstr">Repository</a></p>
+  <div class="footer">Deployed commit: <code id="sha">unknown</code></div>
+</main>
+<script>
+const fmtBTC = n => new Intl.NumberFormat('en-US').format(n) + ' BTC';
+const fmtUSD = n => n == null ? 'Not recorded' : '$' + new Intl.NumberFormat('en-US',{notation:'compact',maximumFractionDigits:2}).format(n);
+const signedBTC = n => `${n > 0 ? '+' : ''}${new Intl.NumberFormat('en-US').format(n)} BTC`;
+const dayAge = iso => Math.floor((Date.now() - new Date(iso + 'T00:00:00Z').getTime()) / 86400000);
+
+async function load(){
+  const [data,meta] = await Promise.all([
+    fetch('./verified_btc_disclosures_2026.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('ledger '+r.status);return r.json()}),
+    fetch('./deployment.json',{cache:'no-store'}).then(r=>r.ok?r.json():({}))
+  ]);
+  const records = data.records.filter(r=>r.as_of_date).sort((a,b)=>a.as_of_date.localeCompare(b.as_of_date));
+  const latest = records.at(-1);
+  const previous = records.at(-2);
+  if(!latest || latest.total_btc !== data.latest_verified.total_btc || latest.as_of_date !== data.latest_verified.as_of_date) throw new Error('latest_verified mismatch');
+
+  holdings.textContent = fmtBTC(latest.total_btc);
+  holdingsDelta.textContent = previous ? `${signedBTC(latest.total_btc-previous.total_btc)} vs previous verified state` : 'First verified state';
+  cost.textContent = fmtUSD(latest.aggregate_purchase_price_usd ?? data.latest_verified.aggregate_purchase_price_usd);
+  avg.textContent = latest.average_purchase_price_usd ? '$'+new Intl.NumberFormat('en-US').format(latest.average_purchase_price_usd) : 'Not recorded';
+  asof.textContent = latest.as_of_date;
+  reported.textContent = `Reported ${latest.reported_date}`;
+  const age = Math.max(0,dayAge(latest.as_of_date));
+  status.textContent = age <= 7 ? `Verified disclosure · ${age} day${age===1?'':'s'} old` : `No newer verified disclosure in ledger · as-of is ${age} days old`;
+  sha.textContent = meta.sha || 'unknown';
+
+  timeline.replaceChildren(...records.slice(-12).reverse().map(r=>{
+    const el=document.createElement('div'); el.className='row';
+    const eventLabel=r.event_type.replace('_',' ');
+    el.innerHTML=`<div><strong>${r.as_of_date}</strong><div class="muted">reported ${r.reported_date}</div></div><div class="${r.event_type}">${eventLabel}</div><div><span class="delta">${signedBTC(r.btc_delta)}</span><br><span class="muted">${fmtBTC(r.total_btc)}</span></div><div class="source"><a href="${r.source_url}" rel="noopener">Primary source</a></div>`;
+    return el;
+  }));
+}
+load().catch(err=>{status.textContent='Dashboard data validation failed'; timeline.textContent=String(err); console.error(err)});
+</script>
+</body>
+</html>
