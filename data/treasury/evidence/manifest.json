@@ -65,12 +65,12 @@
     "evidence": null,
     "http_status": 403,
     "retrieval_status": "origin_blocked_403",
-    "retrieved_at": "2026-08-29T17:21:30.444931+00:00",
+    "retrieved_at": "2026-08-30T17:44:42.349174+00:00",
     "sha256": null,
     "source_url": "https://www.strategy.com/financial-documents",
     "verified_markers": []
   },
   "provenance_rule": "Curated facts are bound to immutable SEC Archives URLs and accession identities. Strategy's issuer-hosted SEC filing archive is monitored when reachable; an HTTP 403 from GitHub-hosted runners is recorded explicitly and never replaced with third-party data.",
-  "retrieved_at": "2026-08-29T17:21:30.444931+00:00",
+  "retrieved_at": "2026-08-30T17:44:42.349174+00:00",
   "schema_version": 4
 }
