@@ -6,14 +6,15 @@
   <meta name="description" content="Strategy Bitcoin treasury state from primary-source verified disclosures.">
   <title>Strategy Bitcoin Treasury — Verified Disclosures</title>
   <style>
-    :root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#151515;background:#f6f5f1;line-height:1.5}
+    :root{font-family:Inter,"Noto Sans JP",system-ui,sans-serif;color:#17233F;background:#F7F5EF;line-height:1.5}
     *{box-sizing:border-box} body{margin:0} main{max-width:1080px;margin:auto;padding:28px 18px 64px}
     h1{font-size:clamp(2rem,6vw,4.4rem);line-height:.98;letter-spacing:-.055em;margin:.25rem 0 1rem;max-width:800px}
     h2{margin-top:2.2rem;font-size:1.35rem} p{max-width:760px}.eyebrow{font-size:.78rem;text-transform:uppercase;letter-spacing:.12em;font-weight:700}
-    .status{display:inline-block;border:1px solid #111;border-radius:999px;padding:.35rem .65rem;font-size:.82rem;font-weight:700;margin:.5rem 0}
-    .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:24px 0}.card{background:white;border:1px solid #d7d4cc;border-radius:14px;padding:16px;min-height:132px}.label{font-size:.78rem;color:#666;text-transform:uppercase;letter-spacing:.07em}.value{font-size:clamp(1.5rem,4vw,2.65rem);font-weight:760;letter-spacing:-.04em;margin:.3rem 0}.sub{font-size:.86rem;color:#555}.notice{border-left:4px solid #222;padding:12px 16px;background:#eceae3;margin:20px 0}.timeline{display:grid;gap:8px}.row{display:grid;grid-template-columns:120px 120px 1fr auto;gap:12px;align-items:center;background:#fff;border:1px solid #ddd9d0;border-radius:10px;padding:12px}.delta{font-variant-numeric:tabular-nums;font-weight:700}.muted{color:#666}.sale{font-weight:700}.acquisition{font-weight:700}.no_change{color:#666}a{color:inherit}.footer{margin-top:36px;font-size:.84rem;color:#666}
+    .status{display:inline-block;border:1px solid #17233F;border-radius:2px;padding:.35rem .65rem;font-size:.82rem;font-weight:700;margin:.5rem 0}
+    .hero-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0 4px}.primary-link{display:inline-flex;min-height:44px;align-items:center;padding:0 16px;border-radius:2px;background:#2563EB;color:#fff;text-decoration:none;font-weight:700}.primary-link:hover{text-decoration:underline}.primary-link:focus-visible,a:focus-visible{outline:3px solid #2563EB;outline-offset:3px}.source-meta{font-size:.86rem;color:#667085}
+    .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:24px 0}.card{background:#FFFFFF;border:1px solid #D9D6CE;border-radius:2px;padding:16px;min-height:132px}.label{font-size:.78rem;color:#667085;text-transform:uppercase;letter-spacing:.07em}.value{font-size:clamp(1.5rem,4vw,2.65rem);font-weight:760;letter-spacing:-.04em;margin:.3rem 0}.sub{font-size:.86rem;color:#667085}.notice{border-left:4px solid #A16207;padding:12px 16px;background:#FFFFFF;margin:20px 0}.timeline{display:grid;gap:8px}.row{display:grid;grid-template-columns:120px 120px 1fr auto;gap:12px;align-items:center;background:#FFFFFF;border:1px solid #D9D6CE;border-radius:2px;padding:12px}.delta{font-variant-numeric:tabular-nums;font-weight:700}.muted{color:#667085}.sale{font-weight:700}.acquisition{font-weight:700}.no_change{color:#667085}a{color:inherit}.footer{margin-top:36px;font-size:.84rem;color:#667085}
     @media(max-width:760px){.grid{grid-template-columns:1fr 1fr}.row{grid-template-columns:1fr 1fr}.row .source{grid-column:1/-1}}
-    @media(max-width:440px){.grid{grid-template-columns:1fr}.row{grid-template-columns:1fr}}
+    @media(max-width:440px){.grid{grid-template-columns:1fr}.row{grid-template-columns:1fr}.hero-actions{align-items:stretch}.primary-link{justify-content:center;width:100%}}
   </style>
 </head>
 <body>
@@ -22,6 +23,10 @@
   <h1>Bitcoin treasury, as last officially disclosed.</h1>
   <p>This page reports the latest state present in the repository's verified 2026 disclosure ledger. It does not infer today's holdings from an older filing.</p>
   <div id="status" class="status">Loading verified disclosure…</div>
+  <div class="hero-actions" aria-label="Latest disclosure evidence">
+    <a id="latestSource" class="primary-link" href="https://github.com/KAFKA2306/mstr/blob/main/data/verified_btc_disclosures_2026.json">Verify latest primary source</a>
+    <span id="sourceMeta" class="source-meta">Loading disclosure identity…</span>
+  </div>
 
   <section class="grid" aria-label="Latest verified treasury state">
     <div class="card"><div class="label">BTC holdings</div><div id="holdings" class="value">—</div><div id="holdingsDelta" class="sub">—</div></div>
@@ -64,6 +69,9 @@ async function load(){
   reported.textContent = `Reported ${latest.reported_date}`;
   const age = Math.max(0,dayAge(latest.as_of_date));
   status.textContent = age <= 7 ? `Verified disclosure · ${age} day${age===1?'':'s'} old` : `No newer verified disclosure in ledger · as-of is ${age} days old`;
+  latestSource.href = latest.source_url;
+  latestSource.rel = 'noopener';
+  sourceMeta.textContent = `As-of ${latest.as_of_date} · reported ${latest.reported_date}`;
   sha.textContent = meta.sha || 'unknown';
 
   timeline.replaceChildren(...records.slice(-12).reverse().map(r=>{
@@ -73,7 +81,7 @@ async function load(){
     return el;
   }));
 }
-load().catch(err=>{status.textContent='Dashboard data validation failed'; timeline.textContent=String(err); console.error(err)});
+load().catch(err=>{status.textContent='Dashboard data validation failed'; sourceMeta.textContent='Primary-source link unavailable until verified data loads'; timeline.textContent=String(err); console.error(err)});
 </script>
 </body>
 </html>
