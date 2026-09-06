@@ -64,6 +64,8 @@ jobs:
           assert 'id="latestSource"' in html
           assert 'Verify latest primary source' in html
           assert 'latestSource.href = latest.source_url' in html
+          assert 'up to the latest 12 verified states' in html.lower()
+          assert 'Open the canonical ledger for the full verified record.' in html
           assert 'min-height:44px' in html
           assert ':focus-visible' in html
           assert '#F7F5EF' in html and '#17233F' in html and '#2563EB' in html
@@ -112,9 +114,9 @@ jobs:
                   with urllib.request.urlopen(base+'verified_btc_disclosures_2026.json',timeout=20) as r:
                       data=json.load(r)
                   latest=data['latest_verified']
-                  journey_ok=('id="latestSource"' in html and 'Verify latest primary source' in html and 'latestSource.href = latest.source_url' in html)
+                  journey_ok=('id="latestSource"' in html and 'Verify latest primary source' in html and 'latestSource.href = latest.source_url' in html and 'up to the latest 12 verified states' in html.lower() and 'Open the canonical ledger for the full verified record.' in html)
                   if meta.get('sha')==expected and latest['as_of_date']>='2026-08-02' and latest['total_btc']==842138 and journey_ok:
-                      print('PRODUCTION_VERIFIED',base,expected,latest['as_of_date'],latest['total_btc'],'headline-evidence-cta')
+                      print('PRODUCTION_VERIFIED',base,expected,latest['as_of_date'],latest['total_btc'],'headline-evidence-cta','timeline-scope-disclosed')
                       break
                   last=(meta,latest,journey_ok)
               except Exception as exc:
