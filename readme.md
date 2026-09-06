@@ -1,11 +1,11 @@
+https://kafka2306.github.io/mstr/
+
 # Strategy Bitcoin Treasury Evidence
 
 [![Verified Strategy BTC disclosures](https://github.com/KAFKA2306/mstr/actions/workflows/verified-btc-disclosures.yml/badge.svg)](https://github.com/KAFKA2306/mstr/actions/workflows/verified-btc-disclosures.yml)
 [![Deploy Pages](https://github.com/KAFKA2306/mstr/actions/workflows/pages.yml/badge.svg)](https://github.com/KAFKA2306/mstr/actions/workflows/pages.yml)
 
 Strategy Inc. のBitcoin treasuryを、SEC / Strategy公式開示のpoint-in-time ledgerとして追跡します。
-
-**Public dashboard:** https://kafka2306.github.io/mstr/
 
 ## Current authority
 
